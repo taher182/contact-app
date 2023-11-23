@@ -75,9 +75,9 @@ class LoginForm extends React.Component
                  <div className='col-md-4'>
                  <label for="pswd">Password<span className='text-danger'>*</span></label>
                  <input type={this.state.passwordViewState} data-toggle="password" className="form-control border" id="pswd" aria-describedby="emailHelp" placeholder="Enter Password" />
-                 <span><input type='checkbox' value='Show Password'className='border-primary pt-2'onClick={this.passwordViewStateFunction}/><label><small> Show Password</small></label></span>
+                 <span><input type='checkbox' value='Show Password'className='border-primary pt-2'onClick={this.passwordViewStateFunction} style={{cursor:"pointer"}}/><label><small> Show Password</small></label></span>
                  {/* <input type='checkbox' className='form-control w-0' style={{float:"left"}} value="show password" /> */}
-                 <small id="Register" className="form-text text-primary mb-2" style={{float:"right"}}><a href='/login' onClick={this.LoginLinkFunction}>Forgot password?</a></small>
+                 <small id="Register" className="form-text text-primary mb-2" style={{float:"right", textDecoration:"underline", cursor:"pointer"}}><a  onClick={this.LoginLinkFunction}>Forgot password?</a></small>
  
                  </div>
              </div>
