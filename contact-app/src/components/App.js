@@ -42,7 +42,7 @@ class App extends React.Component {
      
       <Router>
   <Routes>
-    <Route exact path="/login" element={<LoginForm />} />
+    <Route exact path="/" element={<LoginForm />} />
     <Route path="/register" element={<RegisterForm />} />
   </Routes>
 </Router>

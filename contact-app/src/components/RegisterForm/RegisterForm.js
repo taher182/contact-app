@@ -6,10 +6,12 @@ import userImage from './user.png';
 import Header from '../Header';
 import ToggleBar from '../ToggleBar/ToggleBar';
 import Footer from '../Footer';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import axios from 'axios'; 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
+
 class RegisterForm extends React.Component {
     constructor(props) {
         super(props);
@@ -26,7 +28,9 @@ class RegisterForm extends React.Component {
             profile:'',
             redirect:'',
             passwordError:false,
-            emailError:false
+            emailError:false,
+            setLoading:false,
+            route:false
         };
     }
 
@@ -76,6 +80,7 @@ class RegisterForm extends React.Component {
     registerFormHandler = (e) =>{
         e.preventDefault();
         console.log(this.state)
+        this.setState({setLoading:true})
         const { firstName, lastName, email, phone, password1, password2, image } = this.state;
 
   const formData = new FormData();
@@ -90,18 +95,34 @@ class RegisterForm extends React.Component {
     // If an image is selected (and not the default userImage), include it in the formData
     formData.append('image', image);
   }
-        axios.post('https://effective-yodel-6qgwgvw9596cxrgj-8001.app.github.dev/users/', formData)
+        axios.post('https://effective-yodel-6qgwgvw9596cxrgj-8000.app.github.dev/users/', formData)
         .then(response => {
+            
             console.log('Registration successful:', response.data);
             console.log("status", response.status)
     
             toast.success('Registration Successful');
+            this.setState({
+                setLoading: false,
+                firstName: '',
+                lastName: '',
+                email: '',
+                phone: '',
+                password1: '',
+                password2: '',
+                image: userImage,
+                passwordError: false,
+                emailError: false,
+            
+              });
+              this.delayedCall();
             
         })
         .catch(error => {
             console.error('Error during registration:', error);
             toast.error("Registration unsuccessful");
             console.log("this is error",error.response)
+            this.setState({setLoading:false})
             const pswdError = error?.response?.data?.password;
             const mailError = error?.response?.data?.email;
             if(pswdError)
@@ -113,8 +134,17 @@ class RegisterForm extends React.Component {
                 this.setState({emailError:true})
             }
             // Handle error states or display an error message to the user
-        });
+        })
+        
     }
+    delayedCall = () => {
+        // Simulating a function call after a delay
+        setTimeout(() => {
+          // Replace the below log with the function call or component rendering you want after the delay
+          this.setState({route:true})
+        }, 3000); // Delay time is specified in milliseconds (5 seconds in this case)
+      };
+    
     render() {
         const { image, RegisterFormState, firstName, lastName, email, phone, password1, password2 } = this.state;
      
@@ -123,6 +153,13 @@ class RegisterForm extends React.Component {
         if (RegisterFormState) {
             return (
                 <>
+                {this.state.setLoading &&
+               <LoadingSpinner />
+
+                }
+                {this.state.route &&
+                <Navigate to="/" />
+                }
                  <Header />
                  <ToggleBar />  
                  <ToastContainer />
@@ -137,7 +174,6 @@ class RegisterForm extends React.Component {
                                    
                                     <div style={{ width: '200px', height: '200px', borderRadius: '50%',marginBottom:"45px", cursor:"pointer" }}>
                                         <img src={image} alt="Preview" style={{ width: '100%', height: 'auto' }} onClick={this.handleClickImage} onChange={this.changeHandler} />
-                                        <button className='btn btn-warning' onClick={this.handleUploadImage}>Upload</button>
                                     </div>
                                 </center>
                         <div className='col-lg-6'>
@@ -184,7 +220,7 @@ class RegisterForm extends React.Component {
                     <div className="container" >
                         <div className='row justify-content-center'>
                             <div className='col-lg-6'>
-                           <Link to="/login"> <button className="btn btn-outline-warning w-100 mt-2 mb-2" >Back</button></Link>
+                           <Link to="/"> <button className="btn btn-outline-warning w-100 mt-2 mb-2" >Back</button></Link>
                             {/* onClick={this.LoginFormSateFunction} */}
                    
 
