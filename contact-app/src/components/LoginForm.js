@@ -5,6 +5,7 @@ import Header from './Header';
 import Footer from './Footer';
 import { Link } from 'react-router-dom'; 
 import ToggleBar from './ToggleBar/ToggleBar';
+
 class LoginForm extends React.Component
 {
     constructor(props)
@@ -50,6 +51,7 @@ class LoginForm extends React.Component
             this.setState({passwordViewState:"password"})
         }
     }
+   
     render(){
         if(this.state.loginFormState===true)
         {
@@ -57,6 +59,7 @@ class LoginForm extends React.Component
                 <>
                 <Header />
                 <ToggleBar />
+              
             <div className='container align-items-center mt-5 login'>
             <h2 className="text-center">{this.state.title}</h2>
           
@@ -66,7 +69,6 @@ class LoginForm extends React.Component
                     <hr className='mt-2 mb-2'/>
                     <label for="Email">Email<span className='text-danger'>*</span></label>
                     <input type="email" className="form-control border-2" id="Email" aria-describedby="emailHelp" placeholder="Enter Email" />
-                    
                     </div>
                 </div>
 

@@ -39,22 +39,14 @@ class App extends React.Component {
     
   return (
     <div className="app" >
-      {/* <Header /> */}
-      {/* <AddContact />
-      <ContactList contacts={contacts}/> */}
-      {/* <ToggleBar toggleTheme={this.toggleTheme} /> */}
+     
       <Router>
   <Routes>
     <Route exact path="/login" element={<LoginForm />} />
     <Route path="/register" element={<RegisterForm />} />
   </Routes>
 </Router>
-      {/* <LoginForm /> */}
-      {/* <RegisterForm /> */}
-      {/* < PopupNotification /> */}
-    
-      {/* <Footer /> */}
-
+     
     </div>
   );
 }
