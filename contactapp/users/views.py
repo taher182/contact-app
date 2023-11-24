@@ -21,6 +21,18 @@ class UsersListCreate(APIView):
     
     def post(self, request:Request, *args, **kwargs):
         data = request.data
+        errorData = {}
+        print(data)
+        if(data['password1']==data['password2']):
+            data['password'] =data['password2']
+        else:
+            errorData["password"] = "password don't match"
+        email_check = User.objects.filter(email__iexact=data['email'].strip()).exists()
+        if(email_check):
+            errorData['email'] = "email already exists"
+        if(errorData):
+            return Response(data=errorData, status=status.HTTP_400_BAD_REQUEST)
+        print(data)
         serializer = self.serializer_class(data=data)
 
         if serializer.is_valid():
@@ -44,6 +56,7 @@ class UserRetrieveUpdateDestroy(APIView):
         return Response(data=response, status=status.HTTP_200_OK)
 
     def put(self, request:Request, user_id:uuid):
+       
         data = request.data
         user = get_object_or_404(User, pk=user_id)
         serializer = self.serializer_class(instance=user, data=data)

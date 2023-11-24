@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "users",
-    "contacts"
+    "contacts",
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -50,10 +51,20 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    
 ]
 
 ROOT_URLCONF = "contactapp.urls"
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3001",  # Example: React development server
+    'http://172.16.5.4:3001',
 
+    "https://effective-yodel-6qgwgvw9596cxrgj-3001.app.github.dev",  # Example: Your production domain
+    # Add more origins as needed
+]
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
