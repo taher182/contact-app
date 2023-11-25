@@ -195,7 +195,7 @@ handleImageChange = (e) => {
                                     <input type="file" onChange={this.handleImageChange} accept="image/*" style={{ display: "none" }} id="fileInput"  />
                                    
                                     <div style={{ width: '200px', height: '200px', borderRadius: '50%',marginBottom:"45px", cursor:"pointer" }}>
-                                        <img src={image} alt="Preview" style={{ width: '100%', height: 'auto' }} onClick={this.handleClickImage} onChange={this.changeHandler} />
+                                        <img src={image} alt="Preview" style={{ width: '100%', height: 'auto',borderRadius:"50%", border:"5px solid yellow" }} onClick={this.handleClickImage} onChange={this.changeHandler} />
                                     </div>
                                 </center>
                         <div className='col-lg-6'>
@@ -229,7 +229,7 @@ handleImageChange = (e) => {
                         <label htmlFor="password2">Repeat Password<span className='text-danger'>*</span></label>
                         <input type={this.state.pswdStatus} className="form-control" id="password2" name="password2" aria-describedby="psHelp" placeholder="Enter Password Again" required value={password2} onChange={this.changeHandler} />
                         <span><input type='checkbox' value='Show Password'className='border-primary pt-2'onClick={this.passwordViewStateFunction} style={{cursor:"pointer"}}/><label><small> Show Password</small></label></span>
-                        {this.state.passwordError && <small className='text-danger'>Password dosen't match</small>}
+                        {this.state.passwordError && <small className='text-danger'>Password don't match</small>}
                         </div>
     
                         <div className='col-lg-6 mt-3 mb-2'>

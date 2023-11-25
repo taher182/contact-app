@@ -5,6 +5,8 @@ import Header from './Header';
 import Footer from './Footer';
 import { Link } from 'react-router-dom'; 
 import ToggleBar from './ToggleBar/ToggleBar';
+import { axios } from 'axios';
+import { toast } from 'react-toastify';
 
 class LoginForm extends React.Component
 {
@@ -20,6 +22,9 @@ class LoginForm extends React.Component
             backButtonState:false,
             buttonText:"Login",
             passwordViewState:"password",
+            email:'',
+            password:'',
+            id:''
         };
     }
     LoginLinkFunction = () =>{
@@ -51,7 +56,24 @@ class LoginForm extends React.Component
             this.setState({passwordViewState:"password"})
         }
     }
-   
+    handleChange = () =>{
+        this.setState({[e.target.name]:e.target.value})
+    }
+   login = () => {
+    const {email, password} = this.state
+    const formData = new formData();
+    formData.append('email', email);
+    formData.append('password', password);
+    axios.post('https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/users/login', formData)
+    .then(response =>{
+        id = response.data.id;
+    
+        this.setState({id:id})
+    })
+    .catch(error =>{
+
+    })
+   }
     render(){
         if(this.state.loginFormState===true)
         {
@@ -68,7 +90,7 @@ class LoginForm extends React.Component
                     <div className='col-md-4 '>
                     <hr className='mt-2 mb-2'/>
                     <label for="Email">Email<span className='text-danger'>*</span></label>
-                    <input type="email" className="form-control border-2" id="Email" aria-describedby="emailHelp" placeholder="Enter Email" />
+                    <input type="email" className="form-control border-2" id="Email" aria-describedby="emailHelp" placeholder="Enter Email" name='email' onChange={this.handleChange}/>
                     </div>
                 </div>
 
@@ -76,7 +98,7 @@ class LoginForm extends React.Component
                  <div className="form-group row justify-content-center">
                  <div className='col-md-4'>
                  <label for="pswd">Password<span className='text-danger'>*</span></label>
-                 <input type={this.state.passwordViewState} data-toggle="password" className="form-control border" id="pswd" aria-describedby="emailHelp" placeholder="Enter Password" />
+                 <input type={this.state.passwordViewState} data-toggle="password" className="form-control border" id="pswd" aria-describedby="emailHelp" placeholder="Enter Password" name='password' onChange={this.handleChange}/>
                  <span><input type='checkbox' value='Show Password'className='border-primary pt-2'onClick={this.passwordViewStateFunction} style={{cursor:"pointer"}}/><label><small> Show Password</small></label></span>
                  {/* <input type='checkbox' className='form-control w-0' style={{float:"left"}} value="show password" /> */}
                  <small id="Register" className="form-text text-primary mb-2" style={{float:"right", textDecoration:"underline", cursor:"pointer"}}><a  onClick={this.LoginLinkFunction}>Forgot password?</a></small>

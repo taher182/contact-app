@@ -10,7 +10,7 @@ import dropbox
 import base64
 from io import BytesIO
 # Create your views here.
-
+from django.conf import settings
 import base64
 import dropbox
 from rest_framework.views import APIView
@@ -21,7 +21,15 @@ from .serializers import UserSerializer
 
 class UsersListCreate(APIView):
     serializer_class = UserSerializer
-
+    def get(self, request:Request, *args, **kwargs):
+        users = User.objects.all()
+        serializer = self.serializer_class(instance=users, many=True)
+        response = {
+            "message":"User data",
+            "data":serializer.data
+        }
+        return Response(data=response, status=status.HTTP_200_OK)
+    
     def post(self, request, *args, **kwargs):
         data = request.data.copy()
         errorData = {}
@@ -39,7 +47,7 @@ class UsersListCreate(APIView):
             return Response(data=errorData, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            access_token = "sl.BqitxoxZX4enB5chSeBOSQNHQdqtVpwtIK7oI84BO6Zvi0gznR1k7WGGixJ3WcEgFWi61qcY2LbDl666EbAmTcei9sVTNKtfq-YN-q2D2gPyA3wIuBTD3KcBkuPkqotp61wYMGJSD-NCqOwGszZi"
+            access_token = settings.DROP_BOX_KEY
             uploaded_file = request.data.get('image')
 
             if uploaded_file:  # Check if 'image' exists in the request
@@ -149,3 +157,28 @@ class DropboxUploadView(APIView):
             })
         except Exception as e:
             return Response({'error': str(e)}, status=500)
+
+class LoginCheck(APIView):
+    serializer_class = UserLoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        email = data.get('email')
+        password = data.get('password')
+
+        # Check if the email exists in the database
+        try:
+            user = User.objects.get(email__iexact=email.strip())
+        except User.DoesNotExist:
+            return Response(data={"email": "Email does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Check if the provided password matches the user's password
+        if user.password != password.strip():
+            return Response(data={"password": "Incorrect password"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Serialize the user data if needed (based on UserLoginSerializer)
+        serializer = self.serializer_class(user)
+        response = {
+            "id": serializer.data['id']
+        }
+        return Response(data=response, status=status.HTTP_200_OK)
