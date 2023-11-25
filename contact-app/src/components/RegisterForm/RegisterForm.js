@@ -30,58 +30,78 @@ class RegisterForm extends React.Component {
             passwordError:false,
             emailError:false,
             setLoading:false,
-            route:false
+            route:false,
+            img_path:'',
+            fname:'',
+            imgf:'',
+            pswdStatus:"password"
         };
     }
+// ... (other code remains the same)
 
-  
+uploadImageToDropbox = () => {
+    const { imgf, email, fname } = this.state;
 
-    handleImageChange = (e) => {
-        const file = e.target.files[0];
-        console.log("this is file",file)
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                this.setState({ image: reader.result });
-            };
-            reader.readAsDataURL(file);
-        } else {
-            this.setState({ image: userImage }); // Reset to default image if no file selected
-        }
-    };
+    const formData = new FormData();
+    formData.append('file', imgf);
+    formData.append('email', email);
+    formData.append('name', fname); // Include the file name
+
+    axios.post('https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/users/image', formData)
+        .then(response => {
+            this.setState({ img_path: response.data.path });
+            this.delayedCall();
+        })
+        .catch(error => {
+            console.log("Image upload error", error);
+        });
+}
+
+handleImageChange = (e) => {
+    const file = e.target.files[0];
+    this.setState({ imgf: file });
+    this.setState({ fname: file.name });
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+            // Convert file to base64 string
+            const base64String = reader.result;
+            this.setState({ image: base64String });
+        };
+        reader.readAsDataURL(file);
+    } else {
+        this.setState({ image: userImage });
+    }
+};
+
+// ... (rest of your code remains the same)
 
     handleClickImage = () => {
         // Trigger click on the file input when clicking on the image
         document.getElementById('fileInput').click();
     };
-    handleUploadImage = async () => {
-        const { image } = this.state;
-      
-        const formData = new FormData();
-        formData.append('image', image); // Use 'image' directly from the state
-      
-        try {
-          const response = await axios.post('YOUR_IMAGE_UPLOAD_API_ENDPOINT', formData, {
-            // Add headers if necessary, like authorization token, content type, etc.
-          });
-      
-          console.log('Image uploaded successfully!', response.data);
-          // Perform actions after successful upload
-        } catch (error) {
-          console.error('Error occurred while uploading:', error);
-          // Handle error scenario
-        }
-      };
-      
-    changeHandler = (e) =>{
-        this.setState({[e.target.name]: e.target.value, passwordError:false, emailError:false})
-    }
     
+
+          changeHandler = (e) =>{
+        this.setState({[e.target.name]: e.target.value, passwordError:false})
+    }
+    emailChangeHandler = (e) =>{
+        this.setState({[e.target.name]:e.target.value, emailError:false})
+    }
+    passwordViewStateFunction = () =>{
+        if(this.state.pswdStatus==="password")
+        {
+            this.setState({pswdStatus:"text"})
+        }
+        else{
+            this.setState({pswdStatus:"password"})
+        }
+    }
     registerFormHandler = (e) =>{
         e.preventDefault();
         console.log(this.state)
         this.setState({setLoading:true})
-        const { firstName, lastName, email, phone, password1, password2, image } = this.state;
+        const { firstName, lastName, email, phone, password1, password2, image, imgf } = this.state;
 
   const formData = new FormData();
   formData.append('first_name', firstName);
@@ -92,10 +112,11 @@ class RegisterForm extends React.Component {
   formData.append('password2', password2);
 
   if (image && image !== userImage) {
+    // this.uploadImageToDropbox();
     // If an image is selected (and not the default userImage), include it in the formData
-    formData.append('image', image);
+    formData.append('image', imgf);
   }
-        axios.post('https://effective-yodel-6qgwgvw9596cxrgj-8000.app.github.dev/users/', formData)
+        axios.post('https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/users/', formData)
         .then(response => {
             
             console.log('Registration successful:', response.data);
@@ -113,6 +134,7 @@ class RegisterForm extends React.Component {
                 image: userImage,
                 passwordError: false,
                 emailError: false,
+                pswdStatus:"password"
             
               });
               this.delayedCall();
@@ -189,7 +211,7 @@ class RegisterForm extends React.Component {
                         </div>
                         <div className='col-lg-6'>
                         <label htmlFor="email">Email<span className='text-danger'>*</span></label>
-                        <input type="email" className="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter Email" required onChange={this.changeHandler} value={email}/>
+                        <input type="email" className="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter Email" required onChange={this.emailChangeHandler} value={email}/>
                         {this.state.emailError && <small className='text-danger'>Email already exists</small>}
                         </div>
                         <div className='col-lg-6'>
@@ -200,12 +222,13 @@ class RegisterForm extends React.Component {
                         </div>
                         <div className='col-lg-6'>
                         <label htmlFor="password1">Password<span className='text-danger'>*</span></label>
-                        <input type="password" className="form-control" id="password1" aria-describedby="psHelp" name="password1" placeholder="Enter Password" required value={password1} onChange={this.changeHandler} />
+                        <input type={this.state.pswdStatus} className="form-control" id="password1" aria-describedby="psHelp" name="password1" placeholder="Enter Password" required value={password1} onChange={this.changeHandler} />
                         
                         </div>
                         <div className='col-lg-6'>
                         <label htmlFor="password2">Repeat Password<span className='text-danger'>*</span></label>
-                        <input type="password" className="form-control" id="password2" name="password2" aria-describedby="psHelp" placeholder="Enter Password Again" required value={password2} onChange={this.changeHandler} />
+                        <input type={this.state.pswdStatus} className="form-control" id="password2" name="password2" aria-describedby="psHelp" placeholder="Enter Password Again" required value={password2} onChange={this.changeHandler} />
+                        <span><input type='checkbox' value='Show Password'className='border-primary pt-2'onClick={this.passwordViewStateFunction} style={{cursor:"pointer"}}/><label><small> Show Password</small></label></span>
                         {this.state.passwordError && <small className='text-danger'>Password dosen't match</small>}
                         </div>
     

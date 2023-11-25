@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-5*sv-9h4^o=q0argnzmops135n!h3ca92i20p2re^c()zsxyl-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -59,10 +59,10 @@ MIDDLEWARE = [
 ROOT_URLCONF = "contactapp.urls"
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3001",  # Example: React development server
-    'http://172.16.5.4:3001',
+    "http://localhost:3000",  # Example: React development server
 
-    "https://effective-yodel-6qgwgvw9596cxrgj-3001.app.github.dev",  # Example: Your production domain
+
+    "https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io",  # Example: Your production domain
     # Add more origins as needed
 ]
 TEMPLATES = [
