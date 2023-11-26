@@ -20,7 +20,7 @@ class HomePage extends React.Component{
 
     render(){
         return(
-            <>
+        <>
     
         {this.state.NotificationStatus && (
           <>
@@ -29,8 +29,11 @@ class HomePage extends React.Component{
         )}
         <Header />
         <ToggleBar />
-        {/* <h1>{Cookies.get('id')}</h1> */}
-        <Contact />
+
+   
+       <Contact />
+       
+ 
 
         <Footer />
       </>

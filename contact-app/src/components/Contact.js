@@ -9,23 +9,39 @@ class Contact extends React.Component{
     }
     render(){
         return(
-            <>
- <div className="container">
-  <div className="row">
-    <div className="col-lg-4 mt-2 mb-2">
-      <div className="p-2 border rounded shadow">
-        <img
-          src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
-          alt="Profile"
-          style={{ height: "120px", width: "120px", borderRadius: "50%" }}
-          className="img-fluid rounded-circle"
-        />
-      </div>
-    </div>
-  </div>
-</div>
+          <>
+    
+          <div className='container'>
+            <div className='row'>
 
-</>
+      <div class="col-lg-3" >
+        <div class="card m-2" style={{background:"none", border:"1px solid yellow"}}>
+          <div class="card-body shadow">
+            <div style={{float:'right'}}><input type='checkbox' /></div>
+            <center>
+            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
+              class="rounded-circle img-fluid" style={{width: "150px", border:"1px solid yellow"}} />
+            </center>
+            <p><b>Name: </b></p>
+            <p><b>Phone: </b></p>
+            <p><b>Email: </b></p>
+            <p><b>Category: </b></p>
+
+            <div className='m-1' style={{float:"right"}}>
+              <button className='btn btn-primary m-1'><i className="fas fa-pencil-alt"></i></button>
+              <button className='btn btn-danger m-1'><i className="fas fa-trash-alt"></i></button>
+            </div>
+           
+          </div>
+        </div>
+
+
+            </div>
+      
+          </div>
+          </div>
+   
+          </>
         )
     }
 }

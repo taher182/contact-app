@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm/RegisterForm'
 import HomePage from './HomePage';
+import AddContact from './AddContact';
 
 
 class App extends React.Component {
@@ -46,6 +47,7 @@ class App extends React.Component {
     <Route exact path="/" element={<LoginForm />} />
     <Route path="/register" element={<RegisterForm />} />
     <Route path="/home" element={<HomePage />} />
+    <Route path="/contact" element={<AddContact />} />
   </Routes>
 </Router>
      
