@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Header from './Header';
 import ToggleBar from './ToggleBar/ToggleBar';
 import Footer from './Footer';
+import Contact from './Contact';
 class HomePage extends React.Component{
     constructor(props)
     {
@@ -28,7 +29,8 @@ class HomePage extends React.Component{
         )}
         <Header />
         <ToggleBar />
-        <h1>{Cookies.get('id')}</h1>
+        {/* <h1>{Cookies.get('id')}</h1> */}
+        <Contact />
 
         <Footer />
       </>
