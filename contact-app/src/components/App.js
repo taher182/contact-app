@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm/RegisterForm'
+import HomePage from './HomePage';
 
 
 class App extends React.Component {
@@ -44,6 +45,7 @@ class App extends React.Component {
   <Routes>
     <Route exact path="/" element={<LoginForm />} />
     <Route path="/register" element={<RegisterForm />} />
+    <Route path="/home" element={<HomePage />} />
   </Routes>
 </Router>
      

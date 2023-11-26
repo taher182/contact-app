@@ -11,7 +11,7 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
-
+import Cookies from 'js-cookie';
 class RegisterForm extends React.Component {
     constructor(props) {
         super(props);
@@ -36,6 +36,7 @@ class RegisterForm extends React.Component {
             imgf:'',
             pswdStatus:"password"
         };
+        Cookies.set('page', 'register')
     }
 // ... (other code remains the same)
 
@@ -145,8 +146,8 @@ handleImageChange = (e) => {
             toast.error("Registration unsuccessful");
             console.log("this is error",error.response)
             this.setState({setLoading:false})
-            const pswdError = error?.response?.data?.password;
-            const mailError = error?.response?.data?.email;
+            let pswdError = error?.response?.data?.password;
+            let mailError = error?.response?.data?.email;
             if(pswdError)
             {
                 this.setState({passwordError:true})
