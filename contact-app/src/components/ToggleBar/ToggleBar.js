@@ -70,28 +70,13 @@ class ToggleBar extends React.Component {
         <div className='row '>
             <div className='row-2 '>
 
-           {this.state.page!=="login"  && this.state.page!=='register' &&
-           <>
-           <button onClick={this.toggleTheme} className='btn btn-info m-1 mt-2 mb-2' style={{float:"left"}} title='Theme'>
-            <i className="fas fa-info-circle"></i>
-        </button>
-            <button onClick={this.toggleTheme} className='btn btn-light m-1 mt-2 mb-2' style={{float:"left"}} title='Theme'>
-          <img src={this.state.isDarkTheme?lightMode: darkMode} alt="theme" />
-        </button>
-            <button onClick={this.toggleTheme} className='btn btn-danger m-1 mt-2 mb-2' style={{float:"right"}} title='Theme'>
-            <i className="fas fa-trash-alt"></i>
-        </button>
-            <button onClick={this.toggleTheme} className='btn btn-primary m-1 mt-2 mb-2' style={{float:"right"}} title='Theme'>
-            <FontAwesomeIcon icon={faDownload} />
-        </button>
-           </>
 
-           }
           <>
-     
             <button onClick={this.toggleTheme} className='btn btn-light m-1 mt-2 mb-2' title='Theme' style={{float:"right"}}>
               <img src={this.state.isDarkTheme ? lightMode : darkMode} alt="theme" />
             </button>
+          <button onClick={this.toggleTheme} className='btn btn-info m-1 mt-2 mb-2' style={{float:"right"}} title='Theme'>
+            <i className="fas fa-info-circle"></i></button>
 
           </>
 

@@ -6,6 +6,7 @@ import Header from './Header';
 import ToggleBar from './ToggleBar/ToggleBar';
 import Footer from './Footer';
 import Contact from './Contact';
+import AddContact from './AddContact';
 class HomePage extends React.Component{
     constructor(props)
     {
@@ -29,8 +30,20 @@ class HomePage extends React.Component{
         )}
         <Header />
         <ToggleBar />
+          <div className='container-fluid'>
+          <div className='row'>
+                <div className='col border'>
+                    <button className='btn btn-primary m-1'>Sort</button>
+                    <button className='btn btn-primary m-1'>Sort</button>
+                    
+                </div>
+                <div className='col justify-content-end'>
+                <button className='btn btn-danger m-1'>Sort</button>
+                <button className='btn m-1'>Sort</button>
+                </div>
+            </div>
+          </div>
 
-   
        <Contact />
        
  
