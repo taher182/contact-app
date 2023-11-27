@@ -78,7 +78,11 @@ class LoginForm extends React.Component
         axios.post('https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/users/login', formData)
           .then(response => {
             let id = response.data.id;
+            let email = response.data.email;
+            let userImage = response.data.image;
             Cookies.set('id', id);
+            Cookies.set('email', email);
+            Cookies.set('userImage', userImage);
             Cookies.set('notificationMessage', 'Login Success');
             Cookies.set('notificationStatus', 'true')
             this.setState({ route: true });

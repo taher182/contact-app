@@ -6,6 +6,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from .serializers import *
 from .models import *
+from django.conf import settings
+import dropbox
 # Create your views here.
 class ContactListCreate(APIView):
     serializer_class = ContactSerializer
@@ -18,17 +20,53 @@ class ContactListCreate(APIView):
         }
         return Response(data=response, status=status.HTTP_200_OK)
     
-    def post(self, request:Request, *args, **kwargs):
-        data = request.data
-        serializer = self.serializer_class(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            response = {
-                "message":"contact creaion successful",
-                "data":serializer.data
-            }
-            return Response(data=response, status=status.HTTP_201_CREATED)
-        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, *args, **kwargs):
+        data = request.data.copy()
+        errorData = {}
+
+        if data['category_id'] == '':
+            return Response(data={"category_id":"please select category id"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        
+        try:
+            access_token = settings.DROP_BOX_KEY
+            uploaded_file = request.data.get('image')
+
+            if uploaded_file:  # Check if 'image' exists in the request
+                email = data['created_by']
+                file_name = uploaded_file.name
+
+                # Read the file content
+                file_content = uploaded_file.read()
+
+                # Define Dropbox path for upload
+                path = f'/contact/contactProfiles/{email}/{file_name}'
+
+                # Upload file content to Dropbox
+                dbx = dropbox.Dropbox(access_token)
+                dbx.files_upload(file_content, path)
+
+                # Construct the shared link for the uploaded file
+                shared_link = dbx.sharing_create_shared_link(path).url
+
+                # Update the user data dictionary with the Dropbox file path
+                data['image'] = shared_link
+
+            serializer = self.serializer_class(data=data)
+
+            if serializer.is_valid():
+                serializer.save()
+
+                response = {
+                    "message": "User created and file uploaded to Dropbox",
+                    "data": serializer.data
+                }
+                return Response(data=response, status=status.HTTP_201_CREATED)
+
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class ContactListUpdateDestroy(APIView):
     serializer_class = ContactSerializer

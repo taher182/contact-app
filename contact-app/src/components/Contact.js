@@ -14,7 +14,7 @@ class Contact extends React.Component{
           <div className='container'>
             <div className='row'>
 
-      <div class="col-lg-3" >
+      <div class="col-lg-3 col-md-6" >
         <div class="card m-2" style={{background:"none", border:"1px solid yellow"}}>
           <div class="card-body shadow">
             <div style={{float:'right'}}><input type='checkbox' /></div>

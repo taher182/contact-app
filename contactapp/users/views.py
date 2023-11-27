@@ -117,46 +117,6 @@ class UserRetrieveUpdateDestroy(APIView):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-import dropbox
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-import dropbox
-import base64
-from django.core.files.base import ContentFile
-
-class DropboxUploadView(APIView):
-    def post(self, request):
-        access_token = "sl.BqgtcckD_J_qnzMH0jz4_6HszBpGwsNERfpY1ywwRO3ymL5Xj07Yjncq2yhOhvA2554aLp2NEpHEFmi8so7jIlvS0_h_xFn1_G4QhJAf4ibxNf_hUyNQRI2JWSjze_1atSvn-2Uqusc81sLOuaEz"
-        email = request.data.get('email')
-        uploaded_file = request.data.get('file')
-        file_name = request.data.get('name')
-
-        try:
-            # Read the file content
-            file_content = uploaded_file.read()
-
-            # Encode file content to base64
-            file_content_base64 = base64.b64encode(file_content).decode('utf-8')
-
-            # Define Dropbox path for upload
-            path = f'/users/userprofiles/{email}/{file_name}'
-
-            # Upload file content to Dropbox
-            dbx = dropbox.Dropbox(access_token)
-            dbx.files_upload(file_content, path)
-
-            # Construct the shared link for the uploaded file
-            shared_link = dbx.sharing_create_shared_link(path).url
-
-            return Response({
-                'message': 'File uploaded successfully to Dropbox!',
-                'path': shared_link
-            })
-        except Exception as e:
-            return Response({'error': str(e)}, status=500)
 
 class LoginCheck(APIView):
     serializer_class = UserLoginSerializer
@@ -179,6 +139,8 @@ class LoginCheck(APIView):
         # Serialize the user data if needed (based on UserLoginSerializer)
         serializer = self.serializer_class(user)
         response = {
-            "id": serializer.data['id']
+            "id": serializer.data['id'],
+            "email":serializer.data['email'],
+            'image':serializer.data['image']
         }
         return Response(data=response, status=status.HTTP_200_OK)

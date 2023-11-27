@@ -8,6 +8,7 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
 class AddContact extends React.Component
 {
     constructor(props){
@@ -22,35 +23,38 @@ class AddContact extends React.Component
                 name: '',
                 email: '',
                 phone: '',
-                category: '',
-                path:''
+                category_id: '',
+                path:'',
+                created_by:Cookies.get('email')
               }
         }
     }
 
     handleChange = (e) => {
-        const { name, value } = e.target;
-        // If the name is 'category' (from the select element), find the corresponding category_id
-        if (name === 'category') {
-          const selectedCategory = this.state.categoryData.find(category => category.name === value);
-          if (selectedCategory) {
-            this.setState(prevState => ({
-              formData: {
-                ...prevState.formData,
-                category: value,
-                category_id: selectedCategory.id // Set the category_id based on the selected category's id
-              }
-            }));
-          }
-        } else {
+      const { name, value } = e.target;
+      
+      // Update category and category_id based on the selected value
+      if (name === 'category') {
+        const selectedCategory = this.state.categoryData.find(category => category.name === value);
+        if (selectedCategory) {
           this.setState(prevState => ({
             formData: {
               ...prevState.formData,
-              [name]: value
+              category: value,
+              category_id: selectedCategory.id // Set the category_id based on the selected category's id
             }
           }));
         }
-      };
+      } else {
+        this.setState(prevState => ({
+          formData: {
+            ...prevState.formData,
+            [name]: value
+          }
+        }));
+      }
+    };
+    
       
     handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -100,14 +104,15 @@ class AddContact extends React.Component
         console.log(this.state)
         this.setState({setLoading:true})
         const { formData, image, imgf,id } = this.state;
-
+        this.setState({created_by:Cookies.email})
   const formData1 = new FormData();
  
   formData1.append('name', formData.name);
   formData1.append('email', formData.email);
   formData1.append('phone', formData.phone);
   formData1.append('category_id', formData.category_id);
-  formData1.append('user_id', id)
+  formData1.append('user_id', id);
+  formData1.append('created_by', formData.created_by)
   
 
   if (image && image !== userImage) {
@@ -124,11 +129,15 @@ class AddContact extends React.Component
             toast.success('Registration Successful');
             this.setState({
                 setLoading: false,
-                formData.name: '',
-                formData.email: '',
-                formData.phone: '',
-                formData.image: userImage,
-                formData.category_id:'',
+                formData: {
+                  // Reset the form values to initial state
+                  name: '',
+                  email: '',
+                  phone: '',
+                  category_id: '',
+                  image: userImage,
+                  // ... other fields
+                },
 
             
               });
@@ -160,10 +169,13 @@ class AddContact extends React.Component
 
     return(
         <>
-       
+       {this.state.setLoading &&
+               <LoadingSpinner />
+
+                }
         <Header />
         <ToggleBar />
-       
+  
         <div className='container align-items-center' >
         <h2 className="text-center">Add Contact</h2>
         <form onSubmit={this.ContactFormHandler}>
@@ -203,7 +215,7 @@ class AddContact extends React.Component
         <div className='form-group row justify-content-center'>
             <div className='col-md-4'>
             <label for="inputGroupSelect">Category<span className='text-danger'>*</span></label>
-            <select className="custom-select w-100 rounded  p-2" id="inputGroupSelect" required style={{ border: "1px solid gray", background: "none" }} value={formData.category_id} name='category' onChange={this.handleChange}>
+            <select className="custom-select w-100 rounded  p-2" id="inputGroupSelect" style={{ border: "1px solid gray", background: "none" }} value={formData.category_id} name='category' onChange={this.handleChange}>
                   <option selected>Choose...</option>
                   {categoryData.map((category) => (
                     <option key={category.id}>{category.name}</option>
