@@ -7,7 +7,7 @@ class Footer extends React.Component{
         return(
            
             <>
-<footer className=" text-center text-light bg-warning bg-opacity-50 bg-gradient" style={{
+<footer className=" text-center text-light bg-warning  bg-gradient" style={{
         position: "fixed",
         left: "0",
         bottom: "0",

@@ -32,40 +32,42 @@ class UsersListCreate(APIView):
     
     def post(self, request, *args, **kwargs):
         data = request.data.copy()
-        errorData = {}
+        error_data = {}
 
         if data['password1'] == data['password2']:
             data['password'] = data['password2']
         else:
-            errorData["password"] = "Passwords don't match"
+            error_data["password"] = "Passwords don't match"
 
         email_check = User.objects.filter(email__iexact=data['email'].strip()).exists()
         if email_check:
-            errorData['email'] = "Email already exists"
+            error_data['email'] = "Email already exists"
 
-        if errorData:
-            return Response(data=errorData, status=status.HTTP_400_BAD_REQUEST)
+        if error_data:
+            return Response(data=error_data, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             access_token = settings.DROP_BOX_KEY
             uploaded_file = request.data.get('image')
 
-            if uploaded_file:  # Check if 'image' exists in the request
+            if uploaded_file:  
                 email = data['email']
                 file_name = uploaded_file.name
-
-                # Read the file content
                 file_content = uploaded_file.read()
-
-                # Define Dropbox path for upload
                 path = f'/users/userprofiles/{email}/{file_name}'
 
-                # Upload file content to Dropbox
                 dbx = dropbox.Dropbox(access_token)
                 dbx.files_upload(file_content, path)
 
-                # Construct the shared link for the uploaded file
-                shared_link = dbx.sharing_create_shared_link(path).url
+                # Create settings to allow for public access
+                shared_link_settings = dropbox.sharing.SharedLinkSettings(requested_visibility=dropbox.sharing.RequestedVisibility.public)
+                shared_link_metadata = dbx.sharing_create_shared_link_with_settings(path, settings=shared_link_settings)
+
+                # Extract the shared link URL
+                shared_link = shared_link_metadata.url
+
+                # Modify shared link format for direct access
+                shared_link = shared_link.replace('www.dropbox.com', 'dl.dropboxusercontent.com').split('?')[0]
 
                 # Update the user data dictionary with the Dropbox file path
                 data['image'] = shared_link

@@ -7,6 +7,7 @@ import ToggleBar from './ToggleBar/ToggleBar';
 import Footer from './Footer';
 import Contact from './Contact';
 import AddContact from './AddContact';
+import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrash, faSort, faDownload } from '@fortawesome/free-solid-svg-icons';
 import { Link, Navigate } from 'react-router-dom';
@@ -17,11 +18,27 @@ class HomePage extends React.Component{
         this.state = {
             id: props.id,
             NotificationMessage:Cookies.get('message'),
-            NotificationStatus:Cookies.get('notificationStatus')
+            NotificationStatus:Cookies.get('notificationStatus'),
+            contactList:[]
         }
         Cookies.set('page', 'home')
     }
+    getContacts = () =>{
+     let url = 'https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/contacts/getcontactbyuserid/' + Cookies.get('id')
+      axios.get(url)
+      .then(response =>
+        {
 
+          this.setState({contactList:response.data.data})
+          console.log("contacts", response.data.data)
+        })
+        .catch(error =>{
+          console.log("error", error)
+        })
+    }
+    componentDidMount(){
+      this.getContacts();
+    }
     render(){
         return(
         <>
@@ -35,7 +52,7 @@ class HomePage extends React.Component{
        <Header />
         <ToggleBar />
        </div>
-       <div style={{height:"150px"}} id="border_div"></div>
+       <div style={{height:"120px"}} id="border_div"></div>
           <div className='container mt-2'>
           <div className='row'>
                 <div className='col '>
@@ -45,12 +62,12 @@ class HomePage extends React.Component{
                 </div>
                 <div className='col justify-content-end' >
                 <button className='btn btn-danger m-1' style={{float:"right"}}><FontAwesomeIcon icon={faTrash} /></button>
-               <Link to='/contact'> <button className='btn btn-secondary m-1 border ' style={{float:"right"}}><FontAwesomeIcon icon={faPlus} /></button></Link>
+               <Link to='/contact'> <button className='btn btn-success m-1 ' style={{float:"right"}}><FontAwesomeIcon icon={faPlus} /></button></Link>
                 </div>
             </div>
           </div>
           <hr />
-       <Contact />
+       <Contact contactList={this.state.contactList} />
        
  
        <div style={{height:"150px"}} id="border_div"></div>

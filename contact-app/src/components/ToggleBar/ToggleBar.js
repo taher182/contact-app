@@ -65,26 +65,28 @@ class ToggleBar extends React.Component {
 
   render() {
     return (
-      <div className="toggle-bar container-fluid bg-warning bg-opacity-50 bg-gradient" >
+     <div className='w-100 bg-warning  bg-gradient'>
+       <div className="toggle-bar container " >
       
-        <div className='row '>
-            <div className='row-2 '>
+      <div className='row '>
+          <div className='row-2 '>
 
 
-          <>
-            <button onClick={this.toggleTheme} className='btn btn-light m-1 mt-2 mb-2' title='Theme' style={{float:"right"}}>
-              <img src={this.state.isDarkTheme ? lightMode : darkMode} alt="theme" />
-            </button>
-          <button onClick={this.toggleTheme} className='btn btn-info m-1 mt-2 mb-2' style={{float:"right"}} title='Theme'>
-            <i className="fas fa-info-circle"></i></button>
+        <>
+          <button onClick={this.toggleTheme} className='btn btn-light m-1 mt-2 mb-2' title='Theme' style={{float:"right"}}>
+            <img src={this.state.isDarkTheme ? lightMode : darkMode} alt="theme" />
+          </button>
+        <button onClick={this.toggleTheme} className='btn btn-info m-1 mt-2 mb-2' style={{float:"right"}} title='Theme'>
+          <i className="fas fa-info-circle"></i></button>
 
-          </>
+        </>
 
-            </div>
-        </div>
-       
-        
+          </div>
       </div>
+     
+      
+    </div>
+     </div>
     );
   }
 }

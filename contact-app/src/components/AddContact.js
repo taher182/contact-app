@@ -16,6 +16,7 @@ class AddContact extends React.Component
 
         this.state = {
             id: Cookies.get('id'),
+            setLoading: false,
             image:userImage,
             imgf:'',
             categoryData:[],
@@ -104,7 +105,7 @@ class AddContact extends React.Component
         console.log(this.state)
         this.setState({setLoading:true})
         const { formData, image, imgf,id } = this.state;
-        this.setState({created_by:Cookies.email})
+        this.setState({formData:{created_by:Cookies.email}})
   const formData1 = new FormData();
  
   formData1.append('name', formData.name);
@@ -123,10 +124,10 @@ class AddContact extends React.Component
         axios.post('https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/contacts/', formData1)
         .then(response => {
             
-            console.log('Registration successful:', response.data);
+            console.log('creation successful:', response.data);
             console.log("status", response.status)
     
-            toast.success('Registration Successful');
+            toast.success('creation Successful');
             this.setState({
                 setLoading: false,
                 formData: {
@@ -136,7 +137,7 @@ class AddContact extends React.Component
                   phone: '',
                   category_id: '',
                   image: userImage,
-                  // ... other fields
+                  created_by:Cookies.get('email')
                 },
 
             
@@ -145,21 +146,10 @@ class AddContact extends React.Component
             
         })
         .catch(error => {
-            console.error('Error during registration:', error);
-            toast.error("Registration unsuccessful");
-            console.log("this is error",error.response)
+            console.error('contact creation failure:', error);
+            toast.error("creation unsuccessful");
             this.setState({setLoading:false})
-            let pswdError = error?.response?.data?.password;
-            let mailError = error?.response?.data?.email;
-            if(pswdError)
-            {
-                this.setState({passwordError:true})
-            }
-            if(mailError)
-            {
-                this.setState({emailError:true})
-            }
-            // Handle error states or display an error message to the user
+        
         })
         
     }
@@ -169,6 +159,7 @@ class AddContact extends React.Component
 
     return(
         <>
+        <ToastContainer />
        {this.state.setLoading &&
                <LoadingSpinner />
 

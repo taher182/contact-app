@@ -11,23 +11,23 @@ import dropbox
 # Create your views here.
 class ContactListCreate(APIView):
     serializer_class = ContactSerializer
-    def get(self, request:Request, *args, **kwargs):
+
+    def get(self, request: Request, *args, **kwargs):
         contacts = Contact.objects.all()
         serializer = self.serializer_class(instance=contacts, many=True)
         response = {
-            "message":"List Contacts",
-            "data":serializer.data
+            "message": "List Contacts",
+            "data": serializer.data
         }
         return Response(data=response, status=status.HTTP_200_OK)
-    
+
     def post(self, request, *args, **kwargs):
         data = request.data.copy()
         errorData = {}
 
         if data['category_id'] == '':
-            return Response(data={"category_id":"please select category id"}, status=status.HTTP_400_BAD_REQUEST)
-        
-        
+            return Response(data={"category_id": "please select category id"}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
             access_token = settings.DROP_BOX_KEY
             uploaded_file = request.data.get('image')
@@ -50,6 +50,8 @@ class ContactListCreate(APIView):
                 shared_link = dbx.sharing_create_shared_link(path).url
 
                 # Update the user data dictionary with the Dropbox file path
+                # Modify the shared link URL if needed (change dl=0 to dl=1)
+                shared_link = shared_link.replace('dl=0', 'dl=1')
                 data['image'] = shared_link
 
             serializer = self.serializer_class(data=data)
@@ -150,3 +152,15 @@ class CategoryListUpdateDestroy(APIView):
         category.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class getContactsByUserID(APIView):
+    serializer_class = ContactSerializer
+    def get(self,request:Request, user_id):
+        contact = Contact.objects.filter(user_id=user_id)
+        serializer = self.serializer_class(instance=contact, many=True)
+        response = {
+            "message":"contact",
+            "data":serializer.data
+        }
+        return Response(data=response, status=status.HTTP_200_OK)
+        
