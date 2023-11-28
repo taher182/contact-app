@@ -59,18 +59,13 @@ class UsersListCreate(APIView):
                 dbx = dropbox.Dropbox(access_token)
                 dbx.files_upload(file_content, path)
 
-                # Create settings to allow for public access
-                shared_link_settings = dropbox.sharing.SharedLinkSettings(requested_visibility=dropbox.sharing.RequestedVisibility.public)
-                shared_link_metadata = dbx.sharing_create_shared_link_with_settings(path, settings=shared_link_settings)
-
-                # Extract the shared link URL
-                shared_link = shared_link_metadata.url
-
-                # Modify shared link format for direct access
-                shared_link = shared_link.replace('www.dropbox.com', 'dl.dropboxusercontent.com').split('?')[0]
+                shared_link = dbx.sharing_create_shared_link(path).url
 
                 # Update the user data dictionary with the Dropbox file path
+                # Modify the shared link URL if needed (change dl=0 to dl=1)
+                shared_link = shared_link.replace('dl=0', 'dl=1')
                 data['image'] = shared_link
+
 
             serializer = self.serializer_class(data=data)
 
