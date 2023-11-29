@@ -15,8 +15,7 @@ class Contact extends React.Component {
             contacts: [],
             categoryNames: {},
             selectedIDs: [],
-            delete: true,
-            deleteButtonDisabled: true
+            
         }
     }
     getCategory = (category_id) => {
@@ -71,38 +70,35 @@ class Contact extends React.Component {
         this.setState(prevState => {
             const selectedIDs = [...prevState.selectedIDs];
             const index = selectedIDs.indexOf(id);
-
+            
             if (index === -1) {
                 selectedIDs.push(id);
             } else {
                 selectedIDs.splice(index, 1);
             }
-
+    
             const deleteButtonDisabled = selectedIDs.length < 2;
-
+    
             return { selectedIDs, deleteButtonDisabled };
-        }, () => {
-            // Update the deleteButtonDisabled state after setting the selectedIDs
-            this.setState({ deleteButtonDisabled: this.state.selectedIDs.length < 2 });
         });
     };
-
 
     render() {
 
         console.log("this is contacts", this.state.contacts);
         return (
             <>
+            {console.log("ids", this.state.selectedIDs)}
                 <ToastContainer />
                 <div className='container-fluid mt-2'>
                     <div className='row'>
                         <div className='col '>
                             <button className='btn btn-primary m-1'> <FontAwesomeIcon icon={faSort} /></button>
-                            <button className='btn btn-warning m-1' disabled={this.state.delete || this.state.deleteButtonDisabled}> <FontAwesomeIcon icon={faDownload} /></button>
+                            <button className='btn btn-warning m-1' disabled={(this.state.selectedIDs>2) || (this.state.selectedIDs=='')?true:false}> <FontAwesomeIcon icon={faDownload} /></button>
 
                         </div>
                         <div className='col justify-content-end' >
-                            <button className='btn btn-danger m-1' style={{ float: "right" }} disabled={this.state.delete || this.state.deleteButtonDisabled}>
+                            <button className='btn btn-danger m-1' style={{ float: "right" }} disabled={(this.state.selectedIDs>2) || (this.state.selectedIDs=='')?true:false}>
                                 <FontAwesomeIcon icon={faTrash} />
                             </button>
                             <Link to='/contact'> <button className='btn btn-success m-1 ' style={{ float: "right" }}><FontAwesomeIcon icon={faPlus} /></button></Link>
@@ -151,8 +147,8 @@ class Contact extends React.Component {
                                         <p><b>Email: </b>{contact.email}</p>
                                         <p><b>Category: </b>{this.state.categoryNames[contact.category_id]}</p>
                                         <div className='m-1' style={{ float: "right" }}>
-                                            <button className='btn btn-primary m-1'><i className="fas fa-pencil-alt"></i></button>
-                                            <button className='btn btn-danger m-1 delete' onClick={() => this.handleDelete(contact.id)}><i className="fas fa-trash-alt"></i></button>
+                                            <button className='btn btn-primary m-1' disabled={this.state.selectedIDs>0?true:false}><i className="fas fa-pencil-alt" ></i></button>
+                                            <button className='btn btn-danger m-1 delete' onClick={() => this.handleDelete(contact.id)} disabled={this.state.selectedIDs>0?true:false}><i className="fas fa-trash-alt"></i></button>
                                         </div>
                                     </div>
                                 </div>
