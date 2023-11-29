@@ -8,9 +8,7 @@ import Footer from './Footer';
 import Contact from './Contact';
 import AddContact from './AddContact';
 import axios from 'axios';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTrash, faSort, faDownload } from '@fortawesome/free-solid-svg-icons';
-import { Link, Navigate } from 'react-router-dom';
+
 class HomePage extends React.Component{
     constructor(props)
     {
@@ -52,20 +50,7 @@ class HomePage extends React.Component{
        <Header />
         <ToggleBar />
 
-          <div className='container mt-2'>
-          <div className='row'>
-                <div className='col '>
-                    <button className='btn btn-primary m-1'> <FontAwesomeIcon icon={faSort} /></button>
-                    <button className='btn btn-warning m-1'> <FontAwesomeIcon icon={faDownload} /></button>
-                    
-                </div>
-                <div className='col justify-content-end' >
-                <button className='btn btn-danger m-1' style={{float:"right"}}><FontAwesomeIcon icon={faTrash} /></button>
-               <Link to='/contact'> <button className='btn btn-success m-1 ' style={{float:"right"}}><FontAwesomeIcon icon={faPlus} /></button></Link>
-                </div>
-            </div>
-          </div>
-          <hr />
+         
        <Contact contactList={this.state.contactList} />
        
  

@@ -167,7 +167,7 @@ class AddContact extends React.Component
         <Header />
         <ToggleBar />
   
-        <div className='container align-items-center' >
+        <div className='container-fluid align-items-center' >
         <h2 className="text-center">Add Contact</h2>
         <form onSubmit={this.ContactFormHandler}>
         <center>

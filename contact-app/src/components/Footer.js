@@ -15,7 +15,7 @@ class Footer extends React.Component{
         width: "100%",
         zIndex: "999"}}>
 
-  <div className="container p-2 pb-0">
+  <div className="container-fluid p-2 pb-0">
  
     <section className="mb-2">
       <a className="btn btn-outline-light btn-floating m-1 p-1" href="https://www.linkedin.com/in/taher1822001" role="button" target="_blank" rel="noreferrer"

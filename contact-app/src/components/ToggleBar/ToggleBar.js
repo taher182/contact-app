@@ -66,7 +66,7 @@ class ToggleBar extends React.Component {
   render() {
     return (
      <div className='w-100 bg-warning  bg-gradient'>
-       <div className="toggle-bar container " >
+       <div className="toggle-bar container-fluid " >
       
       <div className='row '>
           <div className='row-2 '>
