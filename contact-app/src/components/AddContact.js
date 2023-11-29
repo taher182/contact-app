@@ -167,7 +167,7 @@ class AddContact extends React.Component
         <Header />
         <ToggleBar />
   
-        <div className='container-fluid align-items-center' >
+        <div className='container align-items-center' >
         <h2 className="text-center">Add Contact</h2>
         <form onSubmit={this.ContactFormHandler}>
         <center>
@@ -178,8 +178,8 @@ class AddContact extends React.Component
         </div>
           <input type="file" onChange={this.handleImageChange} accept="image/*" style={{ display: "none" }} id="fileInput"  />
                                    
-             <div style={{ width: '200px', height: '200px', borderRadius: '50%', cursor:"pointer" }}>
-                 <img src={image} alt="Preview" style={{ width: '100%', height: 'auto',borderRadius:"50%", border:"5px solid yellow" }} onClick={this.handleClickImage} onChange={this.changeHandler} />
+             <div style={{ width: '200px', height: '200px', borderRadius: '50%', cursor:"pointer", border:"5px solid yellow" }}>
+                 <img src={image} alt="Preview" style={{ width: '100%', height: 'auto',borderRadius:"50%",  }} onClick={this.handleClickImage} onChange={this.changeHandler} />
                          </div>
                     </center>
         <div className="form-group row justify-content-center">

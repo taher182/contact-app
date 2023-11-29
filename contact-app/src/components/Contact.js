@@ -46,7 +46,38 @@ class Contact extends React.Component {
                 });
         }
     }
-
+    handleListDelete = async () => {
+        if (window.confirm("Are you sure you want to delete these contacts?")) {
+          try {
+            const { selectedIDs, contacts } = this.state;
+      
+            // Array to store promises for each delete request
+            const deletePromises = [];
+      
+            for (let i = 0; i < selectedIDs.length; i++) {
+              const url = `https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/contacts/${selectedIDs[i]}`;
+              deletePromises.push(axios.delete(url));
+            }
+      
+            // Wait for all delete requests to resolve
+            await Promise.all(deletePromises);
+      
+            // Filter out deleted contacts from the state's contacts array
+            const updatedContacts = contacts.filter((contact) => !selectedIDs.includes(contact.id));
+      
+            // Update the state with the updated contacts array
+            this.setState({
+              contacts: updatedContacts,
+              selectedIDs: [], // Clear selected IDs after deletion
+            });
+      
+            toast.success('Deletion successful');
+          } catch (error) {
+            toast.error('Deletion failed');
+            console.error('Error deleting contacts:', error);
+          }
+        }
+      };
     componentDidMount() {
       
         // Fetch category names for each contact
@@ -98,7 +129,7 @@ class Contact extends React.Component {
 
                         </div>
                         <div className='col justify-content-end' >
-                            <button className='btn btn-danger m-1' style={{ float: "right" }} disabled={(this.state.selectedIDs>2) || (this.state.selectedIDs=='')?true:false}>
+                            <button className='btn btn-danger m-1' style={{ float: "right" }} disabled={(this.state.selectedIDs>2) || (this.state.selectedIDs=='')?true:false} onClick={() => this.handleListDelete()}>
                                 <FontAwesomeIcon icon={faTrash} />
                             </button>
                             <Link to='/contact'> <button className='btn btn-success m-1 ' style={{ float: "right" }}><FontAwesomeIcon icon={faPlus} /></button></Link>
@@ -147,8 +178,8 @@ class Contact extends React.Component {
                                         <p><b>Email: </b>{contact.email}</p>
                                         <p><b>Category: </b>{this.state.categoryNames[contact.category_id]}</p>
                                         <div className='m-1' style={{ float: "right" }}>
-                                            <button className='btn btn-primary m-1' disabled={this.state.selectedIDs>0?true:false}><i className="fas fa-pencil-alt" ></i></button>
-                                            <button className='btn btn-danger m-1 delete' onClick={() => this.handleDelete(contact.id)} disabled={this.state.selectedIDs>0?true:false}><i className="fas fa-trash-alt"></i></button>
+                                            <button className='btn btn-primary m-1' disabled={this.state.selectedIDs.length>0?true:false}><i className="fas fa-pencil-alt" ></i></button>
+                                            <button className='btn btn-danger m-1 delete' onClick={() => this.handleDelete(contact.id)} disabled={this.state.selectedIDs.length>0?true:false}><i className="fas fa-trash-alt"></i></button>
                                         </div>
                                     </div>
                                 </div>
