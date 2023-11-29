@@ -5,9 +5,12 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Cookies from 'js-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTrash, faSort, faDownload } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTrash, faSort, faDownload, faCheckSquare } from '@fortawesome/free-solid-svg-icons';
 import { Link, Navigate } from 'react-router-dom';
-
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import { faSortAlphaDown, faSortAlphaUp, faCalendar } from '@fortawesome/free-solid-svg-icons';
+import Dropdown from 'react-bootstrap/Dropdown';
 class Contact extends React.Component {
     constructor(props) {
         super(props);
@@ -15,7 +18,7 @@ class Contact extends React.Component {
             contacts: [],
             categoryNames: {},
             selectedIDs: [],
-            
+            excelData: []
         }
     }
     getCategory = (category_id) => {
@@ -48,38 +51,77 @@ class Contact extends React.Component {
     }
     handleListDelete = async () => {
         if (window.confirm("Are you sure you want to delete these contacts?")) {
-          try {
-            const { selectedIDs, contacts } = this.state;
-      
-            // Array to store promises for each delete request
-            const deletePromises = [];
-      
-            for (let i = 0; i < selectedIDs.length; i++) {
-              const url = `https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/contacts/${selectedIDs[i]}`;
-              deletePromises.push(axios.delete(url));
+            try {
+                const { selectedIDs, contacts } = this.state;
+
+                // Array to store promises for each delete request
+                const deletePromises = [];
+
+                for (let i = 0; i < selectedIDs.length; i++) {
+                    const url = `https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/contacts/${selectedIDs[i]}`;
+                    deletePromises.push(axios.delete(url));
+                }
+
+                // Wait for all delete requests to resolve
+                await Promise.all(deletePromises);
+
+                // Filter out deleted contacts from the state's contacts array
+                const updatedContacts = contacts.filter((contact) => !selectedIDs.includes(contact.id));
+
+                // Update the state with the updated contacts array
+                this.setState({
+                    contacts: updatedContacts,
+                    selectedIDs: [], // Clear selected IDs after deletion
+                });
+
+                toast.success('Deletion successful');
+            } catch (error) {
+                toast.error('Deletion failed');
+                console.error('Error deleting contacts:', error);
             }
-      
-            // Wait for all delete requests to resolve
-            await Promise.all(deletePromises);
-      
-            // Filter out deleted contacts from the state's contacts array
-            const updatedContacts = contacts.filter((contact) => !selectedIDs.includes(contact.id));
-      
-            // Update the state with the updated contacts array
-            this.setState({
-              contacts: updatedContacts,
-              selectedIDs: [], // Clear selected IDs after deletion
-            });
-      
-            toast.success('Deletion successful');
-          } catch (error) {
-            toast.error('Deletion failed');
-            console.error('Error deleting contacts:', error);
-          }
         }
-      };
+    };
+    excelSheetDownload = async () => {
+        const { selectedIDs } = this.state;
+
+        try {
+            const contactsData = await Promise.all(
+                selectedIDs.map(async (contactId) => {
+                    const url = `https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/contacts/${contactId}`;
+                    const response = await axios.get(url);
+                    return response.data.data;
+                })
+            );
+
+            const workbook = XLSX.utils.book_new();
+            const worksheetData = contactsData.map(({ name, email, phone }) => [name, email, phone]);
+
+            // Create the worksheet
+            const worksheet = XLSX.utils.aoa_to_sheet([['Name', 'Email', 'Phone'], ...worksheetData]);
+
+            // Set column widths (adjust width as needed)
+            worksheet['!cols'] = [
+                { wch: 30 }, // Width for Name column
+                { wch: 30 }, // Width for Email column
+                { wch: 20 }, // Width for Phone column
+            ];
+
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+
+            const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+            const excelBlob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+            saveAs(excelBlob, 'contacts.xlsx');
+
+            toast.success('Excel Sheet download successful');
+            this.setState({selectedIDs:[]})
+        } catch (error) {
+            toast.error('Failed to download Excel Sheet');
+            console.error('Error downloading Excel:', error);
+        }
+    };
+
     componentDidMount() {
-      
+
         // Fetch category names for each contact
         this.state.contacts.forEach(contact => {
             this.getCategory(contact.category_id);
@@ -101,15 +143,15 @@ class Contact extends React.Component {
         this.setState(prevState => {
             const selectedIDs = [...prevState.selectedIDs];
             const index = selectedIDs.indexOf(id);
-            
+
             if (index === -1) {
                 selectedIDs.push(id);
             } else {
                 selectedIDs.splice(index, 1);
             }
-    
+
             const deleteButtonDisabled = selectedIDs.length < 2;
-    
+
             return { selectedIDs, deleteButtonDisabled };
         });
     };
@@ -119,17 +161,38 @@ class Contact extends React.Component {
         console.log("this is contacts", this.state.contacts);
         return (
             <>
-            {console.log("ids", this.state.selectedIDs)}
+                {console.log("ids", this.state.selectedIDs)}
                 <ToastContainer />
                 <div className='container-fluid mt-2'>
                     <div className='row'>
-                        <div className='col '>
-                            <button className='btn btn-primary m-1'> <FontAwesomeIcon icon={faSort} /></button>
-                            <button className='btn btn-warning m-1' disabled={(this.state.selectedIDs>2) || (this.state.selectedIDs=='')?true:false}> <FontAwesomeIcon icon={faDownload} /></button>
+                        <div className='col'>
+                        <button className='btn btn-secondary m-1'  disabled={(this.state.selectedIDs > 2) || (this.state.selectedIDs == '') ? true : false} > <FontAwesomeIcon icon={faCheckSquare} /></button>
+
+                            <Dropdown className='d-inline-block' >
+                                <Dropdown.Toggle variant="primary" id="dropdown-basic" >
+                                    <FontAwesomeIcon icon={faSortAlphaDown} />
+                                </Dropdown.Toggle>
+
+                                <Dropdown.Menu>
+                                    <Dropdown.Item>
+                                        <FontAwesomeIcon icon={faSortAlphaDown} />
+                                       &nbsp; A-Z
+                                    </Dropdown.Item>
+                                    <Dropdown.Item>
+                                        <FontAwesomeIcon icon={faSortAlphaUp} />
+                                        &nbsp; Z-A
+                                    </Dropdown.Item>
+                                    <Dropdown.Item>
+                                        <FontAwesomeIcon icon={faCalendar} />
+                                        &nbsp; Date Created
+                                    </Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                            <button className='btn btn-warning m-1' onClick={this.excelSheetDownload} disabled={(this.state.selectedIDs > 2) || (this.state.selectedIDs == '') ? true : false}> <FontAwesomeIcon icon={faDownload} /></button>
 
                         </div>
                         <div className='col justify-content-end' >
-                            <button className='btn btn-danger m-1' style={{ float: "right" }} disabled={(this.state.selectedIDs>2) || (this.state.selectedIDs=='')?true:false} onClick={() => this.handleListDelete()}>
+                            <button className='btn btn-danger m-1' style={{ float: "right" }} disabled={(this.state.selectedIDs > 2) || (this.state.selectedIDs == '') ? true : false} onClick={() => this.handleListDelete()}>
                                 <FontAwesomeIcon icon={faTrash} />
                             </button>
                             <Link to='/contact'> <button className='btn btn-success m-1 ' style={{ float: "right" }}><FontAwesomeIcon icon={faPlus} /></button></Link>
@@ -178,8 +241,8 @@ class Contact extends React.Component {
                                         <p><b>Email: </b>{contact.email}</p>
                                         <p><b>Category: </b>{this.state.categoryNames[contact.category_id]}</p>
                                         <div className='m-1' style={{ float: "right" }}>
-                                            <button className='btn btn-primary m-1' disabled={this.state.selectedIDs.length>0?true:false}><i className="fas fa-pencil-alt" ></i></button>
-                                            <button className='btn btn-danger m-1 delete' onClick={() => this.handleDelete(contact.id)} disabled={this.state.selectedIDs.length>0?true:false}><i className="fas fa-trash-alt"></i></button>
+                                            <button className='btn btn-primary m-1' disabled={this.state.selectedIDs.length > 0 ? true : false}><i className="fas fa-pencil-alt" ></i></button>
+                                            <button className='btn btn-danger m-1 delete' onClick={() => this.handleDelete(contact.id)} disabled={this.state.selectedIDs.length > 0 ? true : false}><i className="fas fa-trash-alt"></i></button>
                                         </div>
                                     </div>
                                 </div>
