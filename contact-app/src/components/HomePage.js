@@ -48,11 +48,10 @@ class HomePage extends React.Component{
             <ToastContainer />
           </>
         )}
-       <div style={{position:"fixed"}} className='w-100 m-0 p-0'>
+
        <Header />
         <ToggleBar />
-       </div>
-       <div style={{height:"120px"}} id="border_div"></div>
+
           <div className='container mt-2'>
           <div className='row'>
                 <div className='col '>

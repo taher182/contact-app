@@ -225,9 +225,9 @@ class AddContact extends React.Component
     <div className="container" >
                         <div className='row justify-content-center'>
                             <div className='col-lg-4'>
-                           <Link to="/home"> <button className="btn btn-outline-warning w-100 mt-2 mb-2" >Back</button></Link>
-                            {/* onClick={this.LoginFormSateFunction} */}
-                            
+                            <Link to="/home">
+    <button className="btn btn-outline-warning w-100 mt-2 mb-2">Back</button>
+</Link>
 
                             </div>
                         </div>

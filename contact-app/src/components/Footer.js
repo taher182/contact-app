@@ -44,7 +44,7 @@ class Footer extends React.Component{
  
   </div>
   
-  <div className="text-center p-3" style={{backgroundColor: "rgba(0, 0, 0, 0.2)"}}>
+  <div className="text-center p-3 text-dark" style={{backgroundColor: "rgba(0, 0, 0, 0.2)"}}>
     © {year} Designed and Developed by Taher Ahmed
    
   </div>
