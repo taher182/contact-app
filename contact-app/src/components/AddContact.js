@@ -137,7 +137,6 @@ class AddContact extends React.Component
                   phone: '',
                   category_id: '',
                   image: userImage,
-                  created_by:Cookies.get('email')
                 },
 
             
@@ -199,7 +198,7 @@ class AddContact extends React.Component
         <div className="form-group row justify-content-center">
             <div className='col-md-4'>
             <label for="InputPhone">Phone<span className='text-danger'>*</span></label>
-            <input type="text" className="form-control" id="InputPhone" aria-describedby="emailHelp" placeholder="Enter phone number" required value={formData.phone} name='phone' onChange={this.handleChange}/>
+            <input type="number" className="form-control" id="InputPhone" aria-describedby="emailHelp" placeholder="Enter phone number" required value={formData.phone} name='phone' onChange={this.handleChange}/>
             <small id="emailHelp" className="form-text text-muted">We'll never share your contact's phone number with anyone else.</small>
             </div>
         </div>

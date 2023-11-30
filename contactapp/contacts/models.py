@@ -4,7 +4,7 @@ from django.db import models
 class Contact(models.Model):
     name = models.CharField(max_length=512)
     user_id = models.UUIDField()
-    email = models.EmailField()
+    email = models.EmailField(blank=True, null=True)
     phone = models.BigIntegerField()
     created_on = models.DateTimeField(auto_now_add=True)
     image = models.TextField(blank=True, null=True)

@@ -113,7 +113,7 @@ class Contact extends React.Component {
             saveAs(excelBlob, 'contacts.xlsx');
 
             toast.success('Excel Sheet download successful');
-            this.setState({selectedIDs:[]})
+            this.setState({ selectedIDs: [] })
         } catch (error) {
             toast.error('Failed to download Excel Sheet');
             console.error('Error downloading Excel:', error);
@@ -143,13 +143,13 @@ class Contact extends React.Component {
         this.setState(prevState => {
             const selectedIDs = [...prevState.selectedIDs];
             const index = selectedIDs.indexOf(id);
-    
+
             if (index === -1) {
                 selectedIDs.push(id);
             } else {
                 selectedIDs.splice(index, 1);
             }
-    
+
             return { selectedIDs };
         });
     };
@@ -163,8 +163,23 @@ class Contact extends React.Component {
             this.setState({ selectedIDs: allContactIDs });
         }
     };
-    
-        
+    sortByNameAZ = () => {
+        const sortedContacts = this.state.contacts.slice().sort((a, b) => a.name.localeCompare(b.name));
+        this.setState({ contacts: sortedContacts });
+    };
+
+    // Sort contacts by name Z-A
+    sortByNameZA = () => {
+        const sortedContacts = this.state.contacts.slice().sort((a, b) => b.name.localeCompare(a.name));
+        this.setState({ contacts: sortedContacts });
+    };
+
+    // Sort contacts by date created
+    sortByDateCreated = () => {
+        const sortedContacts = this.state.contacts.slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        this.setState({ contacts: sortedContacts });
+    };
+
 
     render() {
 
@@ -176,9 +191,9 @@ class Contact extends React.Component {
                 <div className='container-fluid mt-2'>
                     <div className='row'>
                         <div className='col'>
-                        <button className='btn btn-secondary m-1 select-all' onClick={this.handleSelectAll}>
-    <FontAwesomeIcon icon={faCheckSquare} />
-</button>
+                            <button className='btn btn-secondary m-1 select-all' onClick={this.handleSelectAll}>
+                                <FontAwesomeIcon icon={faCheckSquare} />
+                            </button>
 
                             <Dropdown className='d-inline-block' >
                                 <Dropdown.Toggle variant="primary" id="dropdown-basic" >
@@ -186,15 +201,15 @@ class Contact extends React.Component {
                                 </Dropdown.Toggle>
 
                                 <Dropdown.Menu>
-                                    <Dropdown.Item>
+                                    <Dropdown.Item onClick={this.sortByNameAZ}>
                                         <FontAwesomeIcon icon={faSortAlphaDown} />
-                                       &nbsp; A-Z
+                                        &nbsp; A-Z
                                     </Dropdown.Item>
-                                    <Dropdown.Item>
+                                    <Dropdown.Item onClick={this.sortByNameZA}>
                                         <FontAwesomeIcon icon={faSortAlphaUp} />
                                         &nbsp; Z-A
                                     </Dropdown.Item>
-                                    <Dropdown.Item>
+                                    <Dropdown.Item onClick={this.sortByDateCreated}>
                                         <FontAwesomeIcon icon={faCalendar} />
                                         &nbsp; Date Created
                                     </Dropdown.Item>
