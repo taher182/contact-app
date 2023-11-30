@@ -5,7 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload, faUserEdit, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'; // Import the necessary FontAwesome icons
 import Cookies from 'js-cookie';
 import Dropdown from 'react-bootstrap/Dropdown';
-
+import userImage from '../RegisterForm/user.png';
+import { Navigate } from 'react-router-dom'; 
 class ToggleBar extends React.Component {
   constructor(props) {
     super(props);
@@ -13,7 +14,8 @@ class ToggleBar extends React.Component {
     this.state = {
       isDarkTheme: false,
       page: Cookies.get('page'),
-      userImage: Cookies.get('userImage')
+      userImage: Cookies.get('userImage'),
+      toLogin: false
     };
   }
 
@@ -25,8 +27,16 @@ class ToggleBar extends React.Component {
     // ... your theme toggle logic remains the same
   };
 
+  handleLogout = () => {
+    Cookies.set('id','');
+    Cookies.set('email','');
+    Cookies.set('UserImage','');
+    this.setState({toLogin:true, userImage:null})
+  }
   render() {
     return (
+      <>
+      {this.state.toLogin && <Navigate to='/' />}
       <div className='w-100 bg-warning bg-gradient'>
         <div className="toggle-bar container-fluid">
           <div className='row'>
@@ -40,12 +50,12 @@ class ToggleBar extends React.Component {
               <button onClick={this.toggleTheme} className='btn btn-info m-1' title='Theme'>
                 <i className="fas fa-info-circle"></i>
               </button>
-
+              {console.log("userImage", this.state.userImage)}
               {this.state.page === 'home' && (
                 <Dropdown align="end">
                   <Dropdown.Toggle style={{ backgroundColor: 'transparent', border: 'none' }} id="dropdown-basic">
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', border:"2px solid gray", borderRadius:"50%" }}>
-                      <img src={this.state.userImage} alt="user" style={{ width: "40px", height: "40px", borderRadius: "50%" }} />
+                      <img src={this.state.userImage==='null'?userImage:this.state.userImage} alt="user" style={{ width: "40px", height: "40px", borderRadius: "50%" }} />
                     </div>
                   </Dropdown.Toggle>
 
@@ -57,7 +67,7 @@ class ToggleBar extends React.Component {
                     <Dropdown.Item onClick={() => console.log('Edit Profile clicked')}>
                       <FontAwesomeIcon icon={faUserEdit} /> &nbsp; Edit Profile
                     </Dropdown.Item>
-                    <Dropdown.Item onClick={() => console.log('Logout clicked')}>
+                    <Dropdown.Item onClick={this.handleLogout}>
                       <FontAwesomeIcon icon={faSignOutAlt} /> &nbsp; Logout
                     </Dropdown.Item>
                   </Dropdown.Menu>
@@ -67,6 +77,7 @@ class ToggleBar extends React.Component {
           </div>
         </div>
       </div>
+      </>
     );
   }
 }

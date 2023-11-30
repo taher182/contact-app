@@ -27,11 +27,21 @@ class LoginForm extends React.Component
             id:'',
             route:false,
             pError:false,
-            eError:false
+            eError:false,
+            userEmail:Cookies.get('email'),
+            userImage:Cookies.get('userImage'),
+            userId:Cookies.get('id'),
+            toHome:false
         };
         Cookies.set('page', 'login');
     }
-    
+    handleLoginCheck(){
+        const {userEmail, userImage, userId} = this.state;
+        if(userEmail!=='' && userImage!=='' && userId!=='')
+        {
+            this.setState({toHome:true})
+        }
+    }
     LoginLinkFunction = () =>{
         if(this.state.passwordState===true && this.state.newUserState===true)
         {
@@ -106,6 +116,9 @@ class LoginForm extends React.Component
             toast.error('login failed')
           });
       };
+      componentDidMount(){
+        this.handleLoginCheck();
+      }
     render(){
        
             return(
@@ -114,6 +127,7 @@ class LoginForm extends React.Component
                 <ToggleBar />
                 <ToastContainer />
               {this.state.route && <Navigate to='/home' />}
+              {this.state.toHome && <Navigate to='/home' />}
               
             <div className='container align-items-center mt-5 login'>
             <h2 className="text-center">{this.state.title}</h2>

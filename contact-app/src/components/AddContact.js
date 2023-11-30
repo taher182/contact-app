@@ -9,6 +9,7 @@ import Cookies from 'js-cookie'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
+import {Navigate } from 'react-router-dom'; 
 class AddContact extends React.Component
 {
     constructor(props){
@@ -26,9 +27,18 @@ class AddContact extends React.Component
                 phone: '',
                 category_id: '',
                 path:'',
-                created_by:Cookies.get('email')
+                created_by:Cookies.get('email'),
+                userEmail:Cookies.get('email'),
+                userId:Cookies.get('id'),
+               toLogin:false
               }
         }
+    }
+    handleLoginCheck() {
+      const { userEmail, userId } = this.state;
+      if (userEmail === '' || userId === '') {
+        this.setState({ toLogin: true });
+      }
     }
 
     handleChange = (e) => {
@@ -99,6 +109,7 @@ class AddContact extends React.Component
     componentDidMount() {
         // Fetch categories when the component mounts
         this.getCategories();
+        this.handleLoginCheck();
       }
       ContactFormHandler = (e) =>{
         e.preventDefault();
@@ -159,6 +170,7 @@ class AddContact extends React.Component
     return(
         <>
         <ToastContainer />
+        {this.state.toLogin && <Navigate to='/' />}
        {this.state.setLoading &&
                <LoadingSpinner />
 

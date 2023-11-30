@@ -8,7 +8,7 @@ import Footer from './Footer';
 import Contact from './Contact';
 import AddContact from './AddContact';
 import axios from 'axios';
-
+import { Navigate } from 'react-router-dom'; 
 class HomePage extends React.Component{
     constructor(props)
     {
@@ -17,7 +17,10 @@ class HomePage extends React.Component{
             id: props.id,
             NotificationMessage:Cookies.get('message'),
             NotificationStatus:Cookies.get('notificationStatus'),
-            contactList:[]
+            contactList:[],
+            userEmail:Cookies.get('email'),
+            userId:Cookies.get('id'),
+           toLogin:false
         }
         Cookies.set('page', 'home')
     }
@@ -34,13 +37,21 @@ class HomePage extends React.Component{
           console.log("error", error)
         })
     }
+    handleLoginCheck(){
+      const {userEmail, userId} = this.state;
+      if(userEmail==='' && userId==='')
+      {
+          this.setState({toLogin:true})
+      }
+  }
     componentDidMount(){
       this.getContacts();
+      this.handleLoginCheck();
     }
     render(){
         return(
         <>
-    
+        {this.state.toLogin && <Navigate to='/' />}
         {this.state.NotificationStatus && (
           <>
             <ToastContainer />
