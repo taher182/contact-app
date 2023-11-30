@@ -143,18 +143,28 @@ class Contact extends React.Component {
         this.setState(prevState => {
             const selectedIDs = [...prevState.selectedIDs];
             const index = selectedIDs.indexOf(id);
-
+    
             if (index === -1) {
                 selectedIDs.push(id);
             } else {
                 selectedIDs.splice(index, 1);
             }
-
-            const deleteButtonDisabled = selectedIDs.length < 2;
-
-            return { selectedIDs, deleteButtonDisabled };
+    
+            return { selectedIDs };
         });
     };
+    handleSelectAll = () => {
+        if (this.state.selectedIDs.length === this.state.contacts.length) {
+            // All contacts are already selected, so deselect all
+            this.setState({ selectedIDs: [] });
+        } else {
+            // Not all contacts are selected, so select all
+            const allContactIDs = this.state.contacts.map(contact => contact.id);
+            this.setState({ selectedIDs: allContactIDs });
+        }
+    };
+    
+        
 
     render() {
 
@@ -166,7 +176,9 @@ class Contact extends React.Component {
                 <div className='container-fluid mt-2'>
                     <div className='row'>
                         <div className='col'>
-                        <button className='btn btn-secondary m-1'  disabled={(this.state.selectedIDs > 2) || (this.state.selectedIDs == '') ? true : false} > <FontAwesomeIcon icon={faCheckSquare} /></button>
+                        <button className='btn btn-secondary m-1 select-all' onClick={this.handleSelectAll}>
+    <FontAwesomeIcon icon={faCheckSquare} />
+</button>
 
                             <Dropdown className='d-inline-block' >
                                 <Dropdown.Toggle variant="primary" id="dropdown-basic" >
