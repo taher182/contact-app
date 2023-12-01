@@ -7,6 +7,7 @@ import Cookies from 'js-cookie';
 import Dropdown from 'react-bootstrap/Dropdown';
 import userImage from '../RegisterForm/user.png';
 import { Navigate } from 'react-router-dom'; 
+import { ToastContainer, toast } from 'react-toastify';
 class ToggleBar extends React.Component {
   constructor(props) {
     super(props);
@@ -26,16 +27,43 @@ class ToggleBar extends React.Component {
 
     // ... your theme toggle logic remains the same
   };
-
+  LogoutConfirmation = () =>{
+    toast.warn(
+      <div>
+        <p>Are you sure you want to logout?</p>
+        <button
+          className='btn btn-outline-warning m-1'
+          style={{ float: 'right' }}
+          onClick={() => toast.dismiss()} // Dismiss the toast on "No" button click
+        >
+          No
+        </button>
+        <button
+          className='btn btn-warning m-1'
+          style={{ float: 'right' }}
+          onClick={this.handleLogout} 
+        >
+          Yes
+        </button>
+      </div>,
+      {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: false,
+        closeButton: false,
+      }
+    );
+  }
   handleLogout = () => {
     Cookies.set('id','');
     Cookies.set('email','');
     Cookies.set('userImage','');
-    this.setState({toLogin:true, userImage:null})
+    this.setState({toLogin:true, userImage:null});
+    toast.dismiss();
   }
   render() {
     return (
       <>
+      <ToastContainer />
       {this.state.toLogin && <Navigate to='/' />}
       <div className='w-100 bg-warning bg-gradient'>
         <div className="toggle-bar container-fluid">
@@ -67,7 +95,7 @@ class ToggleBar extends React.Component {
                     <Dropdown.Item onClick={() => console.log('Edit Profile clicked')}>
                       <FontAwesomeIcon icon={faUserEdit} /> &nbsp; Edit Profile
                     </Dropdown.Item>
-                    <Dropdown.Item onClick={this.handleLogout}>
+                    <Dropdown.Item onClick={this.LogoutConfirmation}>
                       <FontAwesomeIcon icon={faSignOutAlt} /> &nbsp; Logout
                     </Dropdown.Item>
                   </Dropdown.Menu>
