@@ -30,7 +30,7 @@ class ToggleBar extends React.Component {
   handleLogout = () => {
     Cookies.set('id','');
     Cookies.set('email','');
-    Cookies.set('UserImage','');
+    Cookies.set('userImage','');
     this.setState({toLogin:true, userImage:null})
   }
   render() {

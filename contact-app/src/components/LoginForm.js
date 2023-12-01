@@ -34,6 +34,7 @@ class LoginForm extends React.Component
             toHome:false
         };
         Cookies.set('page', 'login');
+       
     }
     handleLoginCheck(){
         const {userEmail, userImage, userId} = this.state;
@@ -128,7 +129,7 @@ class LoginForm extends React.Component
                 <ToastContainer />
               {this.state.route && <Navigate to='/home' />}
               {this.state.toHome && <Navigate to='/home' />}
-              
+              {console.log("userEmail ",this.state.userEmail, "userImage ",this.state.userImage, "userId ",this.state.userId)}
             <div className='container align-items-center mt-5 login'>
             <h2 className="text-center">{this.state.title}</h2>
           

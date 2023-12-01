@@ -35,6 +35,19 @@ class Contact extends React.Component {
     }
 
     handleDelete = (contactId) => {
+        toast.warn(
+            <div>
+              <p>Are you sure you want to delete this contact?</p>
+              <button className='btn btn-outline-warning m-1' style={{ float: 'right' }}>No</button>
+              <button className='btn btn-warning m-1' style={{ float: 'right' }}>Yes</button>
+            </div>,
+            {
+              position: toast.POSITION.TOP_CENTER, // Set the position to top center
+              autoClose: false, // Disable auto-close for the toast
+              closeButton: false // Disable the default close button
+            }
+          );
+            
         if (window.confirm("Are you sure you want to delete this contact?")) {
             let url = "https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/contacts/" + contactId;
             axios.delete(url)
@@ -50,6 +63,7 @@ class Contact extends React.Component {
         }
     }
     handleListDelete = async () => {
+        
         if (window.confirm("Are you sure you want to delete these contacts?")) {
             try {
                 const { selectedIDs, contacts } = this.state;
@@ -176,7 +190,7 @@ class Contact extends React.Component {
 
     // Sort contacts by date created
     sortByDateCreated = () => {
-        const sortedContacts = this.state.contacts.slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        const sortedContacts = this.state.contacts.slice().sort((a, b) => new Date(a.created_on) - new Date(b.created_on));
         this.setState({ contacts: sortedContacts });
     };
 
