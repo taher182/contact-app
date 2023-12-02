@@ -16,3 +16,17 @@ body, html {
     transform: scale(1.02);
     cursor: pointer;
   }
+
+  /* Add or modify the styles in your CSS file */
+
+.image-container {
+  width: 200px; /* Set your desired width */
+  height: 200px; /* Set your desired height */
+  overflow: hidden;
+}
+
+.image-container img {
+  width: auto;
+  height: 100%;
+  object-fit: contain; /* Maintain aspect ratio without distortion */
+}

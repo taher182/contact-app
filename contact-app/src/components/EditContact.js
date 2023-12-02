@@ -17,7 +17,7 @@ const EditContact = () => {
     email: '',
     phone: '',
     category_id: '',
-    
+    image:''
   });
 
   const [image, setImage] = useState(userImage); // State for image source
@@ -29,19 +29,24 @@ const EditContact = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setImgFile(file);
+    
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        // Convert file to base64 string
-        const base64String = reader.result;
-        setImage(base64String);
-      };
-      reader.readAsDataURL(file);
+      // Create a URL for the selected image file
+      const imageUrl = URL.createObjectURL(file);
+      setFormData({
+        ...formData,
+        image: imageUrl // Set the image URL directly to formData.image
+      });
+      setImage(imageUrl); // Set the image preview
     } else {
-      setImage(''); // Reset image if no file selected
+      setFormData({
+        ...formData,
+        image: '' // Reset image if no file selected
+      });
+      setImage(''); // Reset image preview
     }
   };
+  
 
   const ContactFormHandler = async (e) => {
     e.preventDefault();
@@ -132,11 +137,18 @@ const EditContact = () => {
           email: data.email,
           phone: data.phone,
           category_id: data.category_id,
+          image:data.image
         });
       })
       .catch(error => {
         console.error('Error fetching contact data:', error);
       });
+  };
+  const handleCategoryChange = (e) => {
+    setFormData({
+      ...formData,
+      category_id: e.target.value // Update category_id in the state
+    });
   };
   return (
     <>
@@ -156,7 +168,7 @@ const EditContact = () => {
             {/* Image upload */}
             <input type="file" onChange={handleImageChange} accept="image/*" style={{ display: 'none' }} id="fileInput" />
             <div style={{ width: '200px', height: '200px', borderRadius: '50%', cursor: 'pointer', border: '5px solid yellow' }}>
-              <img src={image} alt="Preview" style={{ width: '100%', height: 'auto', borderRadius: '50%' }} onClick={handleClickImage} />
+              <img src={formData.image=='' || formData.image==null?userImage:formData.image} alt="Preview" style={{ width: '100%', height: 'auto', borderRadius: '50%',overflow:"auto" }} onClick={handleClickImage} />
             </div>
           </center>
 
@@ -190,12 +202,20 @@ const EditContact = () => {
           <div className="form-group row justify-content-center">
             <div className="col-md-4">
               <label htmlFor="inputGroupSelect">Category<span className="text-danger">*</span></label>
-              <select className="custom-select w-100 rounded p-2" id="inputGroupSelect" style={{ border: '1px solid gray', background: 'none' }} value={formData.category_id} name="category" onChange={handleChange}>
-                <option defaultValue>Choose...</option>
-                {categoryData.map((category) => (
-                  <option key={category.id}>{category.name}</option>
-                ))}
-              </select>
+              <select
+            className="custom-select w-100 rounded p-2"
+            id="inputGroupSelect"
+            style={{ border: '1px solid gray', background: 'none' }}
+            value={formData.category_id} // Bind value to formData.category_id
+            name="category_id"
+            onChange={handleCategoryChange} // Call handleCategoryChange on change
+          >
+            {/* Add a default option with an empty value */}
+            <option value="">Choose...</option>
+            {categoryData.map((category) => (
+              <option key={category.id} value={category.id}>{category.name}</option>
+            ))}
+          </select>
             </div>
           </div>
 
