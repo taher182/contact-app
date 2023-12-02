@@ -72,27 +72,60 @@ class ContactListCreate(APIView):
 
 class ContactListUpdateDestroy(APIView):
     serializer_class = ContactSerializer
-    def get(self,request:Request, contact_id):
+
+    def get(self, request, contact_id):
         contact = get_object_or_404(Contact, pk=contact_id)
         serializer = self.serializer_class(instance=contact)
         response = {
-            "message":"Contact",
-            "data":serializer.data
+            "message": "Contact",
+            "data": serializer.data
         }
         return Response(data=response, status=status.HTTP_200_OK)
-    
-    def put(self,request:Request, contact_id:int):
+
+    def put(self, request, contact_id: int):
         data = request.data
         contact = get_object_or_404(Contact, pk=contact_id)
-        serializer=self.serializer_class(data=data, instance=contact)
+        serializer = self.serializer_class(data=data, instance=contact)
+        
         if serializer.is_valid():
+            uploaded_file = request.data.get('image')
+            if uploaded_file and hasattr(uploaded_file, 'read'):  # Check if 'image' exists and it's a file
+                try:
+                    if 'https://www.dropbox.com/' not in data['image']:
+                        access_token = settings.DROP_BOX_KEY
+                        email = data['created_by']
+                        file_name = uploaded_file.name
+
+                        # Read the file content
+                        file_content = uploaded_file.read()
+
+                        # Define Dropbox path for upload
+                        path = f'/contact/contactProfiles/{email}/{file_name}'
+
+                        # Upload file content to Dropbox
+                        dbx = dropbox.Dropbox(access_token)
+                        dbx.files_upload(file_content, path)
+
+                        # Construct the shared link for the uploaded file
+                        shared_link = dbx.sharing_create_shared_link(path).url
+
+                        # Update the user data dictionary with the Dropbox file path
+                        # Modify the shared link URL if needed (change dl=0 to dl=1)
+                        shared_link = shared_link.replace('dl=0', 'dl=1')
+                        data['image'] = shared_link
+                except Exception as e:
+                    return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
             serializer.save()
             response = {
-                "message":"contact update successfull",
-                "data":serializer.data
+                "message": "Contact updated successfully",
+                "data": serializer.data
             }
             return Response(data=response, status=status.HTTP_200_OK)
-    
+        
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        
     def delete(self, request:Request,contact_id:int):
         contact = get_object_or_404(Contact, pk=contact_id)
         contact.delete()

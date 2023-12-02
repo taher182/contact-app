@@ -19,7 +19,7 @@ class Contact extends React.Component {
             categoryNames: {},
             selectedIDs: [],
             excelData: [],
-            delete:false
+            delete: false
         }
     }
     getCategory = (category_id) => {
@@ -34,109 +34,109 @@ class Contact extends React.Component {
                 console.error('Error fetching category:', error);
             });
     }
-   
+
     handleDelete = (contactId) => {
         toast.warn(
-          <div>
-            <p>Are you sure you want to delete this contact?</p>
-            <button
-              className='btn btn-outline-warning m-1'
-              style={{ float: 'right' }}
-              onClick={() => toast.dismiss()} // Dismiss the toast on "No" button click
-            >
-              No
-            </button>
-            <button
-              className='btn btn-warning m-1'
-              style={{ float: 'right' }}
-              onClick={() => this.deleteContact(contactId)} // Trigger delete function on "Yes" button click
-            >
-              Yes
-            </button>
-          </div>,
-          {
-            position: toast.POSITION.TOP_CENTER,
-            autoClose: false,
-            closeButton: false,
-          }
+            <div>
+                <p>Are you sure you want to delete this contact?</p>
+                <button
+                    className='btn btn-outline-warning m-1'
+                    style={{ float: 'right' }}
+                    onClick={() => toast.dismiss()} // Dismiss the toast on "No" button click
+                >
+                    No
+                </button>
+                <button
+                    className='btn btn-warning m-1'
+                    style={{ float: 'right' }}
+                    onClick={() => this.deleteContact(contactId)} // Trigger delete function on "Yes" button click
+                >
+                    Yes
+                </button>
+            </div>,
+            {
+                position: toast.POSITION.TOP_CENTER,
+                autoClose: false,
+                closeButton: false,
+            }
         );
-      };
-      
-      deleteContact = (contactId) => {
+    };
+
+    deleteContact = (contactId) => {
         let url = "https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/contacts/" + contactId;
         axios.delete(url)
-          .then(response => {
-            const updatedContactList = this.state.contacts.filter(contact => contact.id !== contactId);
-            this.setState({ contacts: updatedContactList, delete:false });
+            .then(response => {
+                const updatedContactList = this.state.contacts.filter(contact => contact.id !== contactId);
+                this.setState({ contacts: updatedContactList, delete: false });
+                toast.dismiss();
+                toast.success('Deletion successful');
+            })
+            .catch(error => {
+                toast.error('Deletion failed');
+                console.error('Error deleting contact:', error);
+            });
+    };
+
+    handleListDelete = (contactId) => {
+        toast.warn(
+            <div>
+                <p>Are you sure you want to delete these contacts?</p>
+                <button
+                    className='btn btn-outline-warning m-1'
+                    style={{ float: 'right' }}
+                    onClick={() => toast.dismiss()} // Dismiss the toast on "No" button click
+                >
+                    No
+                </button>
+                <button
+                    className='btn btn-warning m-1'
+                    style={{ float: 'right' }}
+                    onClick={() => this.deleteListContacts(contactId)} // Trigger delete function on "Yes" button click
+                >
+                    Yes
+                </button>
+            </div>,
+            {
+                position: toast.POSITION.TOP_CENTER,
+                autoClose: false,
+                closeButton: false,
+            }
+        );
+    };
+
+    deleteListContacts = async () => {
+        try {
+            const { selectedIDs, contacts } = this.state;
+
+            // Array to store promises for each delete request
+            const deletePromises = [];
+
+            for (let i = 0; i < selectedIDs.length; i++) {
+                const url = `https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/contacts/${selectedIDs[i]}`;
+                deletePromises.push(axios.delete(url));
+            }
+
+            // Wait for all delete requests to resolve
+            await Promise.all(deletePromises);
+
+            // Filter out deleted contacts from the state's contacts array
+            const updatedContacts = contacts.filter((contact) => !selectedIDs.includes(contact.id));
+
+            // Update the state with the updated contacts array
+            this.setState({
+                contacts: updatedContacts,
+                selectedIDs: [], // Clear selected IDs after deletion
+            });
+
+            // Dismiss the toast notification after deletion is successful
             toast.dismiss();
             toast.success('Deletion successful');
-          })
-          .catch(error => {
-            toast.error('Deletion failed');
-            console.error('Error deleting contact:', error);
-          });
-      };
-      
-      handleListDelete = (contactId) => {
-        toast.warn(
-          <div>
-            <p>Are you sure you want to delete these contacts?</p>
-            <button
-              className='btn btn-outline-warning m-1'
-              style={{ float: 'right' }}
-              onClick={() => toast.dismiss()} // Dismiss the toast on "No" button click
-            >
-              No
-            </button>
-            <button
-              className='btn btn-warning m-1'
-              style={{ float: 'right' }}
-              onClick={() => this.deleteListContacts(contactId)} // Trigger delete function on "Yes" button click
-            >
-              Yes
-            </button>
-          </div>,
-          {
-            position: toast.POSITION.TOP_CENTER,
-            autoClose: false,
-            closeButton: false,
-          }
-        );
-      };
-      
-      deleteListContacts = async () => {
-        try {
-          const { selectedIDs, contacts } = this.state;
-      
-          // Array to store promises for each delete request
-          const deletePromises = [];
-      
-          for (let i = 0; i < selectedIDs.length; i++) {
-            const url = `https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/contacts/${selectedIDs[i]}`;
-            deletePromises.push(axios.delete(url));
-          }
-      
-          // Wait for all delete requests to resolve
-          await Promise.all(deletePromises);
-      
-          // Filter out deleted contacts from the state's contacts array
-          const updatedContacts = contacts.filter((contact) => !selectedIDs.includes(contact.id));
-      
-          // Update the state with the updated contacts array
-          this.setState({
-            contacts: updatedContacts,
-            selectedIDs: [], // Clear selected IDs after deletion
-          });
-      
-          // Dismiss the toast notification after deletion is successful
-          toast.dismiss();
-          toast.success('Deletion successful');
         } catch (error) {
-          toast.error('Deletion failed');
-          console.error('Error deleting contacts:', error);
+            toast.error('Deletion failed');
+            console.error('Error deleting contacts:', error);
         }
-      };
-      
+    };
+
     excelSheetDownload = async () => {
         const { selectedIDs } = this.state;
 
@@ -242,6 +242,7 @@ class Contact extends React.Component {
         console.log("this is contacts", this.state.contacts);
         return (
             <>
+
                 {console.log("ids", this.state.selectedIDs)}
                 <ToastContainer />
                 <div className='container-fluid mt-2'>
@@ -324,7 +325,11 @@ class Contact extends React.Component {
                                         <p><b>Email: </b>{contact.email}</p>
                                         <p><b>Category: </b>{this.state.categoryNames[contact.category_id]}</p>
                                         <div className='m-1' style={{ float: "right" }}>
-                                            <button className='btn btn-primary m-1' disabled={this.state.selectedIDs.length > 0 ? true : false}><i className="fas fa-pencil-alt" ></i></button>
+                                            <Link to={`/editcontact/${contact.id}`}>
+                                                <button className='btn btn-primary m-1'>
+                                                    <i className="fas fa-pencil-alt"></i>
+                                                </button>
+                                            </Link>
                                             <button className='btn btn-danger m-1 delete' onClick={() => this.handleDelete(contact.id)} disabled={this.state.selectedIDs.length > 0 ? true : false}><i className="fas fa-trash-alt"></i></button>
                                         </div>
                                     </div>
