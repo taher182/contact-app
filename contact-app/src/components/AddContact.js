@@ -210,7 +210,7 @@ class AddContact extends React.Component {
                 <select className="custom-select w-100 rounded  p-2" id="inputGroupSelect" style={{ border: "1px solid gray", background: "none" }} value={formData.category_id} name='category' onChange={this.handleChange}>
                   <option selected>Choose...</option>
                   {categoryData.map((category) => (
-                    <option key={category.id}>{category.name}</option>
+                    <option key={category.id} >{category.name}</option>
                   ))}
                 </select>
               </div>

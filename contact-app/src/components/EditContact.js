@@ -17,12 +17,14 @@ const EditContact = () => {
     email: '',
     phone: '',
     category_id: '',
-    image:''
+    image:'',
+    // created_by:Cookies.get('email')
   });
-
+console.log("created by: ", formData.created_by);
   const [image, setImage] = useState(userImage); // State for image source
   const [imgFile, setImgFile] = useState(null); // State for image file
-  const [id, setId] = useState(Cookies.get('id'))
+  const [id, setId] = useState(Cookies.get('id'));
+  const [created_by, setCreatedBy] = useState(Cookies.get('email'))
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -51,10 +53,6 @@ const EditContact = () => {
   const ContactFormHandler = async (e) => {
     e.preventDefault();
     try {
-      // Set loading state to true
-      // You may want to implement setLoading useState to handle this
-      // setLoading(true);
-
       const formData1 = new FormData();
 
       formData1.append('name', formData.name);
@@ -62,29 +60,26 @@ const EditContact = () => {
       formData1.append('phone', formData.phone);
       formData1.append('category_id', formData.category_id);
 
-      // Append image file if available
-      if (imgFile) {
-        formData1.append('image', imgFile);
+      if (formData.image) {
+        formData1.append('image', image);
       }
 
-      // Assuming you have 'id' and 'created_by' available
       formData1.append('user_id', id);
-      formData1.append('created_by', formData.created_by);
+      formData1.append('created_by', created_by); // Ensure created_by is passed
 
-      // Make API call using axios
-      const response = await axios.post('https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/contacts/', formData1);
-      
-      console.log('Creation successful:', response.data);
-      // Reset form data
+      let url = 'https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/contacts/' + params.id;
+      const response = await axios.put(url, formData1);
+
+      console.log('Update successful:', response.data);
       setFormData({
         name: '',
         email: '',
         phone: '',
         category_id: '',
+        image: ''
       });
-      setImage(''); // Reset image
-      // Handle success (e.g., show success message)
-    } catch (error) {
+      setImage('');
+    }catch (error) {
       console.error('Contact creation failure:', error);
       // Handle error (e.g., show error message)
     } finally {
@@ -156,7 +151,7 @@ const EditContact = () => {
       {/* Assuming formData.toLogin and formData.setLoading are defined */}
       {formData.toLogin && <Navigate to="/" />}
       {formData.setLoading && <LoadingSpinner />}
-
+      {console.log(Cookies.get('email'))}
       <Header />
       <ToggleBar />
 
@@ -222,7 +217,7 @@ const EditContact = () => {
           {/* Submit button */}
           <div className="form-group row justify-content-center">
             <div className="col-md-4">
-              <button type="submit" className="btn btn-primary w-100 mt-2">Add</button>
+              <button type="submit" className="btn btn-primary w-100 mt-2">Update</button>
             </div>
           </div>
         </form>
