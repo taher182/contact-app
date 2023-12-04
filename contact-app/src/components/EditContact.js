@@ -21,7 +21,7 @@ const EditContact = () => {
     // created_by:Cookies.get('email')
   });
 console.log("created by: ", formData.created_by);
-  const [image, setImage] = useState(userImage); // State for image source
+  const [image, setImage] = useState(null); // State for image source
   const [imgFile, setImgFile] = useState(null); // State for image file
   const [id, setId] = useState(Cookies.get('id'));
   const [created_by, setCreatedBy] = useState(Cookies.get('email'))
@@ -39,7 +39,7 @@ console.log("created by: ", formData.created_by);
         ...formData,
         image: imageUrl // Set the image URL directly to formData.image
       });
-      setImage(imageUrl); // Set the image preview
+      setImage(file); // Set the image preview
     } else {
       setFormData({
         ...formData,
@@ -60,8 +60,12 @@ console.log("created by: ", formData.created_by);
       formData1.append('phone', formData.phone);
       formData1.append('category_id', formData.category_id);
 
-      if (formData.image) {
-        formData1.append('image', image);
+      if (typeof(formData.image)=='string') {
+        formData1.append('image', formData.image);
+      }
+      else{
+        formData1.append('image', '');
+        
       }
 
       formData1.append('user_id', id);
@@ -127,6 +131,7 @@ console.log("created by: ", formData.created_by);
     axios.get(url)
       .then(response => {
         let data = response.data.data;
+        
         setFormData({
           name: data.name,
           email: data.email,
@@ -134,6 +139,7 @@ console.log("created by: ", formData.created_by);
           category_id: data.category_id,
           image:data.image
         });
+        setImage(data.image || '')
       })
       .catch(error => {
         console.error('Error fetching contact data:', error);
@@ -147,6 +153,7 @@ console.log("created by: ", formData.created_by);
   };
   return (
     <>
+    {console.log("image path", image)}
       <ToastContainer />
       {/* Assuming formData.toLogin and formData.setLoading are defined */}
       {formData.toLogin && <Navigate to="/" />}

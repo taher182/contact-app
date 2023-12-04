@@ -8,6 +8,7 @@ from .serializers import *
 from .models import *
 from django.conf import settings
 import dropbox
+import datetime
 # Create your views here.
 class ContactListCreate(APIView):
     serializer_class = ContactSerializer
@@ -83,48 +84,59 @@ class ContactListUpdateDestroy(APIView):
         return Response(data=response, status=status.HTTP_200_OK)
 
     def put(self, request, contact_id: int):
-        data = request.data
-        contact = get_object_or_404(Contact, pk=contact_id)
-        serializer = self.serializer_class(data=data, instance=contact)
-        
-        if serializer.is_valid():
+        data = request.data.copy()
+        errorData = {}
+
+        if data['category_id'] == '':
+            return Response(data={"category_id": "please select category id"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            access_token = settings.DROP_BOX_KEY
             uploaded_file = request.data.get('image')
-            if uploaded_file and hasattr(uploaded_file, 'read'):  # Check if 'image' exists and it's a file
-                try:
-                    if 'https://www.dropbox.com/' not in data['image']:
-                        access_token = settings.DROP_BOX_KEY
-                        email = data['created_by']
-                        file_name = uploaded_file.name
 
-                        # Read the file content
-                        file_content = uploaded_file.read()
+            if uploaded_file and isinstance(uploaded_file, str):
+                # If 'image' is a string (URL), assume it's already an image path, do nothing
+                pass
 
-                        # Define Dropbox path for upload
-                        path = f'/contact/contactProfiles/{email}/{file_name}'
+            elif uploaded_file and hasattr(uploaded_file, 'file'):
+                email = data['created_by']
+                file_name = uploaded_file.name
 
-                        # Upload file content to Dropbox
-                        dbx = dropbox.Dropbox(access_token)
-                        dbx.files_upload(file_content, path)
+                # Read the file content
+                file_content = uploaded_file.read()
 
-                        # Construct the shared link for the uploaded file
-                        shared_link = dbx.sharing_create_shared_link(path).url
+                # Define Dropbox path for upload
+                path = f'/contact/contactProfiles/{email}/{file_name}'
 
-                        # Update the user data dictionary with the Dropbox file path
-                        # Modify the shared link URL if needed (change dl=0 to dl=1)
-                        shared_link = shared_link.replace('dl=0', 'dl=1')
-                        data['image'] = shared_link
-                except Exception as e:
-                    return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            
-            serializer.save()
-            response = {
-                "message": "Contact updated successfully",
-                "data": serializer.data
-            }
-            return Response(data=response, status=status.HTTP_200_OK)
-        
-        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                # Upload file content to Dropbox
+                dbx = dropbox.Dropbox(access_token)
+                dbx.files_upload(file_content, path)
 
+                # Construct the shared link for the uploaded file
+                shared_link = dbx.sharing_create_shared_link(path).url
+
+                # Update the user data dictionary with the Dropbox file path
+                # Modify the shared link URL if needed (change dl=0 to dl=1)
+                shared_link = shared_link.replace('dl=0', 'dl=1')
+                
+                data['image'] = shared_link
+                data['updated_on'] = datetime.datetime.now()
+            contact = get_object_or_404(Contact, pk=contact_id)
+            serializer = self.serializer_class(data=data, instance=contact)
+
+            if serializer.is_valid():
+                serializer.save()
+
+                response = {
+                    "message": "Contact updated and file uploaded to Dropbox",
+                    "data": serializer.data
+                }
+                return Response(data=response, status=status.HTTP_201_CREATED)
+
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
     def delete(self, request:Request,contact_id:int):
         contact = get_object_or_404(Contact, pk=contact_id)
