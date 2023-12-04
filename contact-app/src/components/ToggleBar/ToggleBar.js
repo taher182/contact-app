@@ -6,7 +6,7 @@ import { faDownload, faUserEdit, faSignOutAlt } from '@fortawesome/free-solid-sv
 import Cookies from 'js-cookie';
 import Dropdown from 'react-bootstrap/Dropdown';
 import userImage from '../RegisterForm/user.png';
-import { Navigate } from 'react-router-dom'; 
+import {Link, Navigate } from 'react-router-dom'; 
 import { ToastContainer, toast } from 'react-toastify';
 class ToggleBar extends React.Component {
   constructor(props) {
@@ -75,9 +75,12 @@ class ToggleBar extends React.Component {
                 </div>
               </button>
 
+              <Link to='/info'>
+
               <button onClick={this.toggleTheme} className='btn btn-info m-1' title='Theme'>
                 <i className="fas fa-info-circle"></i>
               </button>
+              </Link>
               {console.log("userImage", this.state.userImage)}
               {this.state.page === 'home' && (
                 <Dropdown align="end">

@@ -6,7 +6,7 @@ import HomePage from './HomePage';
 import AddContact from './AddContact';
 import EditContact from './EditContact';
 import { useParams } from 'react-router-dom';
-
+import Info from './Info';
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -50,6 +50,7 @@ class App extends React.Component {
     <Route path="/home" element={<HomePage />} />
     <Route path="/contact" element={<AddContact />} />
     <Route path="/editcontact/:id" element={<EditContact />} />
+    <Route path="/info" element={<Info />} />
       
   </Routes>
 </Router>
