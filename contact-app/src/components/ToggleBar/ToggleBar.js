@@ -13,20 +13,31 @@ class ToggleBar extends React.Component {
     super(props);
 
     this.state = {
-      isDarkTheme: false,
+      isDarkTheme: Cookies.get('darkTheme'),
       page: Cookies.get('page'),
       userImage: Cookies.get('userImage'),
       toLogin: false
     };
+    // Cookies.set('darkTheme', false);
   }
-
   toggleTheme = () => {
-    this.setState((prevState) => ({
-      isDarkTheme: !prevState.isDarkTheme
-    }));
+    const newTheme = !this.state.isDarkTheme; // Toggle the theme
+    this.setState({ isDarkTheme: newTheme });
 
-    // ... your theme toggle logic remains the same
+    // Set the cookie to store the theme preference
+    Cookies.set('darkTheme', newTheme);
+
+    // Set body background and text color based on the theme
+    if (newTheme) {
+      document.body.style.backgroundColor = 'black';
+      document.body.style.color = 'white';
+    } else {
+      document.body.style.backgroundColor = 'white';
+      document.body.style.color = 'black';
+    }
   };
+
+
   LogoutConfirmation = () =>{
     toast.warn(
       <div>

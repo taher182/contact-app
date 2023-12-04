@@ -12,6 +12,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import Cookies from 'js-cookie';
+import BASE_URL from '../config'
 class RegisterForm extends React.Component {
     constructor(props) {
         super(props);
@@ -48,7 +49,7 @@ uploadImageToDropbox = () => {
     formData.append('email', email);
     formData.append('name', fname); // Include the file name
 
-    axios.post('https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/users/image', formData)
+    axios.post(`${BASE_URL}/users/image`, formData)
         .then(response => {
             this.setState({ img_path: response.data.path });
             this.delayedCall();
@@ -117,7 +118,7 @@ handleImageChange = (e) => {
     // If an image is selected (and not the default userImage), include it in the formData
     formData.append('image', imgf);
   }
-        axios.post('https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/users/', formData)
+        axios.post(`${BASE_URL}/users/`, formData)
         .then(response => {
             
             console.log('Registration successful:', response.data);

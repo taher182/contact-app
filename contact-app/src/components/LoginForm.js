@@ -7,6 +7,7 @@ import ToggleBar from './ToggleBar/ToggleBar';
 import  axios  from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import Cookies from 'js-cookie';
+import BASE_URL from './config';
 class LoginForm extends React.Component
 {
     
@@ -86,7 +87,7 @@ class LoginForm extends React.Component
         formData.append('email', email);
         formData.append('password', password);
     
-        axios.post('https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/users/login', formData)
+        axios.post(`${BASE_URL}/users/login`, formData)
           .then(response => {
             let id = response.data.id;
             let email = response.data.email;

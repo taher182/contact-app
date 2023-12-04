@@ -9,6 +9,7 @@ import Contact from './Contact';
 import AddContact from './AddContact';
 import axios from 'axios';
 import { Navigate } from 'react-router-dom'; 
+import BASE_URL from './config';
 class HomePage extends React.Component{
     constructor(props)
     {
@@ -25,7 +26,7 @@ class HomePage extends React.Component{
         Cookies.set('page', 'home')
     }
     getContacts = () =>{
-     let url = 'https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/contacts/getcontactbyuserid/' + Cookies.get('id')
+     let url = `${BASE_URL}/contacts/getcontactbyuserid/${Cookies.get('id')}`;
       axios.get(url)
       .then(response =>
         {

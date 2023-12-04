@@ -9,6 +9,7 @@ import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
 import Cookies from 'js-cookie'
 import userImage from './RegisterForm/user.png'
 import { useParams } from 'react-router-dom';
+import BASE_URL from './config';
 // Assuming you have other necessary components imported as well
 
 const EditContact = () => {
@@ -71,7 +72,7 @@ console.log("created by: ", formData.created_by);
       formData1.append('user_id', id);
       formData1.append('created_by', created_by); // Ensure created_by is passed
 
-      let url = 'https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/contacts/' + params.id;
+      let url = `${BASE_URL}/contacts/${params.id}`;
       const response = await axios.put(url, formData1);
 
       console.log('Update successful:', response.data);
@@ -102,7 +103,7 @@ console.log("created by: ", formData.created_by);
 
   // Function to fetch categories
   const getCategories = () => {
-    axios.get('https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/contacts/category')
+    axios.get(`${BASE_URL}/contacts/category`)
       .then(response => {
         // Handle successful response here
         console.log('Data:', response.data.data);
@@ -127,7 +128,7 @@ console.log("created by: ", formData.created_by);
 
 
   const getContactData = (id) => {
-    let url = 'https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/contacts/' + id;
+    let url = `${BASE_URL}/contacts/${id}`;
     axios.get(url)
       .then(response => {
         let data = response.data.data;

@@ -11,6 +11,7 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { faSortAlphaDown, faSortAlphaUp, faCalendar } from '@fortawesome/free-solid-svg-icons';
 import Dropdown from 'react-bootstrap/Dropdown';
+import BASE_URL from './config';
 class Contact extends React.Component {
     constructor(props) {
         super(props);
@@ -23,7 +24,7 @@ class Contact extends React.Component {
         }
     }
     getCategory = (category_id) => {
-        let url = 'https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/contacts/category/' + category_id;
+        let url = `${BASE_URL}/contacts/category/${category_id}`;
         axios(url)
             .then(response => {
                 const categoryNames = { ...this.state.categoryNames };
@@ -63,7 +64,7 @@ class Contact extends React.Component {
     };
 
     deleteContact = (contactId) => {
-        let url = "https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/contacts/" + contactId;
+        let url = `${BASE_URL}/contacts/${contactId}`;
         axios.delete(url)
             .then(response => {
                 const updatedContactList = this.state.contacts.filter(contact => contact.id !== contactId);
@@ -112,7 +113,7 @@ class Contact extends React.Component {
             const deletePromises = [];
 
             for (let i = 0; i < selectedIDs.length; i++) {
-                const url = `https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/contacts/${selectedIDs[i]}`;
+                const url = `${BASE_URL}/contacts/${selectedIDs[i]}`;
                 deletePromises.push(axios.delete(url));
             }
 
@@ -143,7 +144,7 @@ class Contact extends React.Component {
         try {
             const contactsData = await Promise.all(
                 selectedIDs.map(async (contactId) => {
-                    const url = `https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/contacts/${contactId}`;
+                    const url = `${BASE_URL}/contacts/${contactId}`;
                     const response = await axios.get(url);
                     return response.data.data;
                 })

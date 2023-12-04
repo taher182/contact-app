@@ -10,6 +10,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
 import { Navigate } from 'react-router-dom';
+import BASE_URL from './config';
 class AddContact extends React.Component {
   constructor(props) {
     super(props);
@@ -29,7 +30,8 @@ class AddContact extends React.Component {
         created_by: Cookies.get('email'),
         userEmail: Cookies.get('email'),
         userId: Cookies.get('id'),
-        toLogin: false
+        toLogin: false,
+        isDarkTheme:Cookies.get('darkTheme')==='false'
       }
     }
   }
@@ -94,7 +96,7 @@ class AddContact extends React.Component {
   getCategories = () => {
 
 
-    axios.get('https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/contacts/category')
+    axios.get(`${BASE_URL}/contacts/category`)
       .then(response => {
         // Handle successful response here
         console.log('Data:', response.data.data);
@@ -109,6 +111,7 @@ class AddContact extends React.Component {
     // Fetch categories when the component mounts
     this.getCategories();
     this.handleLoginCheck();
+    this.toggleTheme();
   }
   ContactFormHandler = (e) => {
     e.preventDefault();
@@ -128,7 +131,7 @@ class AddContact extends React.Component {
       formData1.append('image', imgf);
     }
   
-    axios.post('https://8000-taher182-contactapp-jl43wlbwhuz.ws-us106.gitpod.io/contacts/', formData1)
+    axios.post(`${BASE_URL}/contacts/`, formData1)
       .then(response => {
         console.log('creation successful:', response.data);
   
@@ -152,6 +155,35 @@ class AddContact extends React.Component {
         // toast.error('Creation Unsuccessful');
         this.setState({ setLoading: false });
       });
+  };
+
+  toggleTheme = () => {
+    const newTheme = !this.state.isDarkTheme; // Toggle the theme
+    this.setState({ isDarkTheme: newTheme });
+  
+    // Set the cookie to store the theme preference
+    Cookies.set('darkTheme', newTheme);
+  
+    // Set body background and text color based on the theme
+    if (newTheme) {
+      document.body.style.backgroundColor = 'black';
+      document.body.style.color = 'white';
+  
+      // Update input field color for dark theme
+      const inputs = document.getElementsByTagName('input');
+      for (let i = 0; i < inputs.length; i++) {
+        inputs[i].style.color = 'white';
+      }
+    } else {
+      document.body.style.backgroundColor = 'white';
+      document.body.style.color = 'black';
+  
+      // Update input field color for light theme
+      const inputs = document.getElementsByTagName('input');
+      for (let i = 0; i < inputs.length; i++) {
+        inputs[i].style.color = 'black';
+      }
+    }
   };
   
   render() {
