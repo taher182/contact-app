@@ -7,6 +7,7 @@ import AddContact from './AddContact';
 import EditContact from './EditContact';
 import { useParams } from 'react-router-dom';
 import Info from './Info';
+import PasswordReset from './PasswordReset';
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -51,7 +52,7 @@ class App extends React.Component {
     <Route path="/contact" element={<AddContact />} />
     <Route path="/editcontact/:id" element={<EditContact />} />
     <Route path="/info" element={<Info />} />
-      
+    <Route path="/passwordreset" element={<PasswordReset />} />
   </Routes>
 </Router>
      
