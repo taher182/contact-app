@@ -35,10 +35,10 @@ console.log("created by: ", formData.created_by);
     
     if (file) {
       // Create a URL for the selected image file
-      const imageUrl = URL.createObjectURL(file);
+      // const imageUrl = URL.createObjectURL(file);
       setFormData({
         ...formData,
-        image: imageUrl // Set the image URL directly to formData.image
+        image: file // Set the image URL directly to formData.image
       });
       setImage(file); // Set the image preview
     } else {
@@ -55,26 +55,26 @@ console.log("created by: ", formData.created_by);
     e.preventDefault();
     try {
       const formData1 = new FormData();
-
+  
       formData1.append('name', formData.name);
       formData1.append('email', formData.email);
       formData1.append('phone', formData.phone);
       formData1.append('category_id', formData.category_id);
-
-      if (typeof(formData.image)=='string') {
-        formData1.append('image', formData.image);
+  
+      if (formData.image) {
+        formData1.append('image', formData.image); // Use updated image if there's a change
+      } else {
+        // If no new image selected, use the image data from the database
+        // Assuming the existing image data is stored in formData.image
+        formData1.append('image', image);
       }
-      else{
-        formData1.append('image', '');
-        
-      }
-
+  
       formData1.append('user_id', id);
-      formData1.append('created_by', created_by); // Ensure created_by is passed
-
+      formData1.append('created_by', created_by);
+  
       let url = `${BASE_URL}/contacts/${params.id}`;
       const response = await axios.put(url, formData1);
-
+  
       console.log('Update successful:', response.data);
       setFormData({
         name: '',
@@ -84,7 +84,7 @@ console.log("created by: ", formData.created_by);
         image: ''
       });
       setImage('');
-    }catch (error) {
+    } catch (error) {
       console.error('Contact creation failure:', error);
       // Handle error (e.g., show error message)
     } finally {
@@ -92,7 +92,7 @@ console.log("created by: ", formData.created_by);
       // setLoading(false);
     }
   };
-
+  
   const handleClickImage = () => {
     document.getElementById('fileInput').click();
   };
@@ -126,7 +126,14 @@ console.log("created by: ", formData.created_by);
  
   }, [params.id]); // Empty dependency array ensures it runs only once on mount
 
-
+  useEffect(() => {
+    // ...
+  
+    return () => {
+      // Cleanup object URL to avoid memory leaks
+      URL.revokeObjectURL(image);
+    };
+  }, []);
   const getContactData = (id) => {
     let url = `${BASE_URL}/contacts/${id}`;
     axios.get(url)
@@ -138,14 +145,15 @@ console.log("created by: ", formData.created_by);
           email: data.email,
           phone: data.phone,
           category_id: data.category_id,
-          image:data.image
+          image: data.image // Create object URL for the blob data
         });
-        setImage(data.image || '')
+        setImage(data.image); // Set image state with the object URL
       })
       .catch(error => {
         console.error('Error fetching contact data:', error);
       });
   };
+  
   const handleCategoryChange = (e) => {
     setFormData({
       ...formData,
@@ -154,7 +162,7 @@ console.log("created by: ", formData.created_by);
   };
   return (
     <>
-    {console.log("image path", image)}
+    {console.log("image path", formData.image)}
       <ToastContainer />
       {/* Assuming formData.toLogin and formData.setLoading are defined */}
       {formData.toLogin && <Navigate to="/" />}
@@ -171,7 +179,7 @@ console.log("created by: ", formData.created_by);
             {/* Image upload */}
             <input type="file" onChange={handleImageChange} accept="image/*" style={{ display: 'none' }} id="fileInput" />
             <div style={{ width: '200px', height: '200px', borderRadius: '50%', cursor: 'pointer', border: '5px solid yellow' }}>
-              <img src={formData.image=='' || formData.image==null?userImage:formData.image} alt="Preview" style={{ width: '100%', height: 'auto', borderRadius: '50%',overflow:"auto" }} onClick={handleClickImage} />
+              <img src={formData.image} alt="Preview" style={{ width: '100%', height: 'auto', borderRadius: '50%',overflow:"auto" }} onClick={handleClickImage} />
             </div>
           </center>
 
